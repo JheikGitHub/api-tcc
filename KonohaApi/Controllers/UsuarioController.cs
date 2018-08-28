@@ -27,6 +27,14 @@ namespace KonohaApi.Controllers
         }
 
         [HttpGet]
+        [Route("obterUser")]
+        public IHttpActionResult ObterUsuario()
+        {
+            var user = DAO.ObterUser(User.Identity.Name);
+            return Ok();
+        }
+
+        [HttpGet]
         [Route("busca-todos")]
         public IHttpActionResult BuscaTodos()
         {
@@ -94,8 +102,8 @@ namespace KonohaApi.Controllers
 
             string resultado = DAO.Remove(id);
 
-            if(resultado.Equals("OK"))
-            return Ok();
+            if (resultado.Equals("OK"))
+                return Ok();
 
             return BadRequest(resultado);
         }
