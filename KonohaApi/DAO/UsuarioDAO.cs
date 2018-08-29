@@ -2,6 +2,7 @@
 using KonohaApi.Interfaces;
 using KonohaApi.Models;
 using KonohaApi.ViewModels;
+using KonohaApi.ViewModels.ModelosDeAjuda;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
@@ -18,8 +19,6 @@ namespace KonohaApi.DAO
         public string Adicionar(UsuarioViewModel entity)
         {
             bool usuarioExistente = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf) > 0;
-
-
             try
             {
                 if (usuarioExistente)
@@ -146,7 +145,7 @@ namespace KonohaApi.DAO
 
         #region complementos
 
-        public UsuarioViewModel ObterUser(string username)
+        public UsuarioViewModel GetAcess(string username)
         {
             var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(Db.Usuario.First(x => x.UserName == username));
 

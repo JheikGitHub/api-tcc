@@ -55,12 +55,12 @@ namespace KonohaApi.Models
 
         public bool Ativo { get; set; }
 
-        public int? FuncaoId { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string Perfil { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comentario> Comentario { get; set; }
-
-        public virtual Funcao Funcao { get; set; }
 
         public virtual Funcionario Funcionario { get; set; }
 

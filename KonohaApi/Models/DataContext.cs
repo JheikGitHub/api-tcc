@@ -15,7 +15,6 @@ namespace KonohaApi.Models
         public virtual DbSet<Estado> Estado { get; set; }
         public virtual DbSet<Evento> Evento { get; set; }
         public virtual DbSet<Faculdade> Faculdade { get; set; }
-        public virtual DbSet<Funcao> Funcao { get; set; }
         public virtual DbSet<Funcionario> Funcionario { get; set; }
         public virtual DbSet<Participante> Participante { get; set; }
         public virtual DbSet<ParticipanteEvento> ParticipanteEvento { get; set; }
@@ -136,10 +135,6 @@ namespace KonohaApi.Models
                 .WithRequired(e => e.Faculdade)
                 .WillCascadeOnDelete(true);
 
-            modelBuilder.Entity<Funcao>()
-                .Property(e => e.Funcao1)
-                .IsUnicode(false);
-
             modelBuilder.Entity<Funcionario>()
                 .HasMany(e => e.AgendaEvento)
                 .WithRequired(e => e.Funcionario)
@@ -206,6 +201,10 @@ namespace KonohaApi.Models
 
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.Senha)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Usuario>()
+                .Property(e => e.Perfil)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Usuario>()

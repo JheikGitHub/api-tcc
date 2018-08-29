@@ -28,7 +28,7 @@ namespace KonohaApi
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/api/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(2),
                 Provider = new AuthorizationServerProvider()
             };
 

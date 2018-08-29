@@ -22,9 +22,7 @@ namespace KonohaApi.DAO
                     throw new Exception("Usuario ja cadastrado.");
 
                 var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
-                alunoModel.Usuario.FuncaoId = 1;
                 Db.Participante.Add(alunoModel);
-
                 Db.SaveChanges();
 
                 return "OK";

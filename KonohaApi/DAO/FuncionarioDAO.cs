@@ -20,22 +20,6 @@ namespace KonohaApi.DAO
 
                 Db.Funcionario.Add(funcionarioModel);
                 Db.SaveChanges();
-
-                if (funcionarioModel.IsAdmin)
-                {
-                    var usuario = Db.Usuario.Find(funcionarioModel.Id);
-                    usuario.FuncaoId = 3;
-                    Db.Entry(usuario).State = EntityState.Modified;
-                    Db.SaveChanges();
-                }
-                else
-                {
-                    var usuario = Db.Usuario.Find(funcionarioModel.Id);
-                    usuario.FuncaoId = 2;
-                    Db.Entry(usuario).State = EntityState.Modified;
-                    Db.SaveChanges();
-                }
-
                 return "OK";
             }
             catch (Exception e)

@@ -27,11 +27,11 @@ namespace KonohaApi.Controllers
         }
 
         [HttpGet]
-        [Route("obterUser")]
+        [Route("acess-user")]
         public IHttpActionResult ObterUsuario()
         {
-            var user = DAO.ObterUser(User.Identity.Name);
-            return Ok();
+            var acessUser = DAO.GetAcess(User.Identity.Name);
+            return Ok(acessUser);
         }
 
         [HttpGet]

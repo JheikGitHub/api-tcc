@@ -40,24 +40,23 @@ namespace KonohaApi
 
                 // emitindo o token com informacoes extras
                 // se o usuário existe
-                var identidadeUsuario = new ClaimsIdentity(context.Options.AuthenticationType);
+                var identity = new ClaimsIdentity(context.Options.AuthenticationType);
 
-                identidadeUsuario.AddClaim(new Claim(ClaimTypes.Name, usuario.UserName));
+                identity.AddClaim(new Claim(ClaimTypes.Name, usuario.UserName));
 
-                var funcao = dataContext.Funcao.Find(usuario.FuncaoId);
 
-                identidadeUsuario.AddClaim(new Claim(ClaimTypes.Role, funcao.Funcao1));
 
-                var roles = new List<string>
+                identity.AddClaim(new Claim(ClaimTypes.Role, usuario.Perfil));
+
+                List<string> roles = new List<string>
                 {
-                    funcao.Funcao1
+                    usuario.Perfil
                 };
 
-                GenericPrincipal principal = new GenericPrincipal(identidadeUsuario, roles.ToArray());
-
+                GenericPrincipal principal = new GenericPrincipal(identity, roles.ToArray());
                 Thread.CurrentPrincipal = principal;
 
-                context.Validated(identidadeUsuario);
+                context.Validated(identity);
             }
             catch (Exception)
             {
