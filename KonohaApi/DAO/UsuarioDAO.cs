@@ -145,7 +145,7 @@ namespace KonohaApi.DAO
 
         #region complementos
 
-        public UsuarioViewModel GetAcess(string username)
+        public UsuarioViewModel GetUser(string username)
         {
             var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(Db.Usuario.First(x => x.UserName == username));
 

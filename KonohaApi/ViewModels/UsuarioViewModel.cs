@@ -53,8 +53,10 @@ namespace KonohaApi.ViewModels
 
         [ScaffoldColumn(false)]
         public bool Ativo { get; set; }
-        
-        public int FuncaoId { get; set; }
+
+        [Required]
+        [Display(Name = "Perfil")]
+        public string Perfil { get; set; }
 
     }
     
