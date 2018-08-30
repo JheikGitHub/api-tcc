@@ -26,6 +26,7 @@ namespace KonohaApi.Controllers
             set => _dao = value;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("acess-user")]
         public IHttpActionResult ObterUsuario()

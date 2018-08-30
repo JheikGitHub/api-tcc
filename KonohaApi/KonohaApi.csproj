@@ -144,7 +144,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="AuthorizationServerProvider.cs" />
     <Compile Include="Controllers\AgendaController.cs" />
     <Compile Include="Controllers\EventoController.cs" />
@@ -204,6 +203,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Start\" />
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
   </ItemGroup>

@@ -1,6 +1,4 @@
-﻿using KonohaApi.App_Start;
-using KonohaApi.Mappers;
-using System.Web.Http;
+﻿using KonohaApi.Mappers;
 
 namespace KonohaApi
 {
@@ -8,7 +6,6 @@ namespace KonohaApi
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(WebApiConfig.Register);
             AutoMapperConfig.RegisterMappings();
 
         }
