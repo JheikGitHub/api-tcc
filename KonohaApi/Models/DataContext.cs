@@ -178,11 +178,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.Cpf)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<Usuario>()
-                .Property(e => e.PathFoto3x4)
-                .IsUnicode(false);
-
+            
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.PathFotoPerfil)
                 .IsUnicode(false);

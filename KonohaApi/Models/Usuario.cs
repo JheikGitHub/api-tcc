@@ -24,11 +24,7 @@ namespace KonohaApi.Models
         [Required]
         [StringLength(14)]
         public string Cpf { get; set; }
-
-        [Required]
-        [StringLength(500)]
-        public string PathFoto3x4 { get; set; }
-
+        
         [Required]
         [StringLength(500)]
         public string PathFotoPerfil { get; set; }

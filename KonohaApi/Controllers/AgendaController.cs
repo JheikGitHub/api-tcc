@@ -23,8 +23,8 @@ namespace KonohaApi.Controllers
 
         #region Crud Agenda
         [HttpGet]
-        [Route("todos-os-eventos-da-agenda/{id:int}")]
-        public IHttpActionResult BuscaEventosDaAgenda(int id)
+        [Route("todos-os-eventos-da-agenda/{id}")]
+        public IHttpActionResult BuscaEventosDaAgenda(string id)
         {
             var eventos = DAO.BuscaEventosDaAgenda(id);
 

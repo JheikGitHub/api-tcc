@@ -206,6 +206,7 @@
     <Folder Include="App_Start\" />
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
+    <Folder Include="Imagens\Usuario\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

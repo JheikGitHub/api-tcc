@@ -95,11 +95,12 @@ namespace KonohaApi.DAO
             return agendaViewModel;
         }*/
 
-        public ICollection<EventoViewModel> BuscaEventosDaAgenda(int id)
+        public ICollection<EventoViewModel> BuscaEventosDaAgenda(string nomeAgenda)
         {
             ICollection<EventoViewModel> eventos = new Collection<EventoViewModel>();
 
-            var agenda = Db.AgendaEvento.Find(id);
+            var agenda = Db.AgendaEvento.First(x => x.Nome == nomeAgenda);
+
             if (agenda != null)
             {
                 eventos = Mapper.Map<ICollection<Evento>, ICollection<EventoViewModel>>(agenda.Evento.ToList());

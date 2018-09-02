@@ -6,8 +6,11 @@ using KonohaApi.ViewModels.ModelosDeAjuda;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace KonohaApi.DAO
@@ -25,9 +28,13 @@ namespace KonohaApi.DAO
                     throw new Exception("Usuario ja cadastrado");
 
                 var usuarioModel = Mapper.Map<UsuarioViewModel, Usuario>(entity);
+                string path = "C:/KonohaApi/KonohaApi/Imagens/Usuario/";
+                string caminhoArquivo = Path.Combine(@path, Path.GetFileName(usuarioModel.PathFotoPerfil));
+                File.CreateText(caminhoArquivo);
 
                 usuarioModel.DataCadastro = DateTime.Now;
                 usuarioModel.Ativo = true;
+                usuarioModel.PathFotoPerfil = caminhoArquivo;
                 Db.Usuario.Add(usuarioModel);
                 Db.SaveChanges();
 
