@@ -22,6 +22,19 @@ namespace KonohaApi.Controllers
         }
 
         #region Crud Agenda
+
+        [HttpGet]
+        [Route("filtrar-agenda/{id}")]
+        public IHttpActionResult FiltrarAgenda(string id)
+        {
+            if (id == null)
+                return BadRequest("valor nulo.");
+
+            var eventos = DAO.FiltrarAgenda(id);
+
+            return Ok(eventos);
+        }
+
         [HttpGet]
         [Route("todos-os-eventos-da-agenda/{id}")]
         public IHttpActionResult BuscaEventosDaAgenda(string id)

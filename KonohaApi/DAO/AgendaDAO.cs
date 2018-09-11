@@ -110,6 +110,15 @@ namespace KonohaApi.DAO
             return eventos;
         }
 
+        public AgendaViewModel FiltrarAgenda(string nomeAgenda)
+        {
+            var agendaModel = Db.AgendaEvento.FirstOrDefault(x => x.Nome.Contains(nomeAgenda));
+
+            var agendaViewModel = Mapper.Map<AgendaEvento, AgendaViewModel>(agendaModel);
+
+            return agendaViewModel;
+        }
+
         public string Remove(int id)
         {
             try

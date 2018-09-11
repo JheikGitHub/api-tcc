@@ -57,7 +57,7 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var usuario = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf && x.Id != entity.Id) > 0;
+                var usuario = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf && x.Id != entity.Id) > 1;
 
                 if (usuario)
                     throw new Exception("Usuario ja cadastrado com mesmo UserName ou CPF.");
@@ -291,25 +291,40 @@ namespace KonohaApi.DAO
 
             foreach (var item in resultado)
             {
-                var evento = Mapper.Map<Evento, EventoViewModel>(Db.Evento.Find(item.EventoId));
+                var eventoModel = Db.Evento.Find(item.EventoId);
+                var evento = Mapper.Map<Evento, EventoViewModel>(eventoModel);
                 eventos.Add(evento);
             }
 
             return eventos;
         }
 
-        public string GerarPDF(string codigo)
+        public ICollection<EventoViewModel> ListaEventosComCorfimacaoPresenca(int IdPartipante)
         {
-            var c = Db.ParticipanteEvento.First(x => x.CodigoValidacao == codigo);
+            ICollection<EventoViewModel> eventos = new List<EventoViewModel>();
 
-            if (c == null)
-                return "Código não encontrado.";
+            var resultado = Db.ParticipanteEvento.Where(x => x.ParticipanteId == IdPartipante && x.ConfirmacaoPresenca == true).ToList();
 
-            var usuario = Db.Usuario.Find(c.ParticipanteId);
+            foreach (var item in resultado)
+            {
+                var eventoModel = Db.Evento.Find(item.EventoId);
+                var evento = Mapper.Map<Evento, EventoViewModel>(eventoModel);
+                eventos.Add(evento);
+            }
+
+            return eventos;
+        }
+
+        public string GerarPDF(EmitiCertificado certificado)
+        {
+            var codigo = Db.ParticipanteEvento.FirstOrDefault
+                (x => x.ParticipanteId == certificado.UsuarioId && x.EventoId == certificado.EventoId && x.ConfirmacaoPresenca == true);
+
+            var usuario = Db.Usuario.Find(certificado.UsuarioId);
 
             var participante = Db.Participante.Find(usuario.Id);
 
-            var evento = Db.Evento.Find(c.EventoId);
+            var evento = Db.Evento.Find(certificado.EventoId);
 
             var agenda = Db.AgendaEvento.Find(evento.AgendaEventoId);
 
@@ -319,6 +334,8 @@ namespace KonohaApi.DAO
                 return "Evento não encontrado.";
             if (agenda == null)
                 return "Agenda não encontrada.";
+
+
             //gera certificado
             var doc = new PdfDocument();
 
@@ -347,8 +364,8 @@ namespace KonohaApi.DAO
              , XBrushes.Black, new XRect(30, 180, page.Width - 60, page.Height - 60));
 
             textFormatter.DrawString("Código de validação:", new XFont("Arial", 10, XFontStyle.Bold), XBrushes.Black, new XRect(397, 370, page.Width - 60, page.Height - 60));
-            textFormatter.DrawString(codigo, new XFont("Arial", 10, XFontStyle.Regular), XBrushes.Black, new XRect(500, 370, page.Width - 60, page.Height - 60));
-            string caminho = @"C:\KonohaApi\KonohaApi\Certificados\Certificado" + codigo + ".pdf";
+            textFormatter.DrawString(codigo.CodigoValidacao, new XFont("Arial", 10, XFontStyle.Regular), XBrushes.Black, new XRect(500, 370, page.Width - 60, page.Height - 60));
+            string caminho = @"C:\KonohaApi\KonohaApi\Certificados\Certificado" + codigo.CodigoValidacao + ".pdf";
             doc.Save(caminho);
 
             return caminho;

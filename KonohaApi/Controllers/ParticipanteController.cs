@@ -82,7 +82,7 @@ namespace KonohaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            string resultado = DAO.Adicionar(aluno);
+            string resultado = DAO.AdicionarParticipante(User.Identity.Name, aluno);
 
             if (resultado.Equals("OK"))
             {

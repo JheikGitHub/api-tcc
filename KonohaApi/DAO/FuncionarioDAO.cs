@@ -29,6 +29,27 @@ namespace KonohaApi.DAO
 
         }
 
+        public string AdicionarFuncionario(string userName, FuncionarioViewModel entity)
+        {
+            try
+            {
+                var usuario = Db.Usuario.FirstOrDefault(x => x.UserName == userName);
+                if (usuario == null)
+                    throw new Exception("Usuario invalido.");
+
+                var funcionarioModel = Mapper.Map<FuncionarioViewModel, Funcionario>(entity);
+                funcionarioModel.Id = usuario.Id;
+                Db.Funcionario.Add(funcionarioModel);
+                Db.SaveChanges();
+                return "OK";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
         public FuncionarioViewModel BuscaPorId(int id)
         {
             var funcionarioViewModel = Mapper.Map<Funcionario, FuncionarioViewModel>(Db.Funcionario.First(x => x.Id == id));

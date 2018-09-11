@@ -175,6 +175,7 @@
     <Compile Include="Models\Funcionario.cs" />
     <Compile Include="Models\Participante.cs" />
     <Compile Include="Models\ParticipanteEvento.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\TopicoDiscucao.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

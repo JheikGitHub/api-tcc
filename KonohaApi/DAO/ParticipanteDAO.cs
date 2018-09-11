@@ -11,6 +11,7 @@ namespace KonohaApi.DAO
 {
     public class ParticipanteDAO : BaseDAO, ICrud<ParticipanteViewModel>, IDisposable
     {
+        
         #region Crud Participante
         public string Adicionar(ParticipanteViewModel entity)
         {
@@ -22,6 +23,32 @@ namespace KonohaApi.DAO
                     throw new Exception("Usuario ja cadastrado.");
 
                 var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
+                Db.Participante.Add(alunoModel);
+                Db.SaveChanges();
+
+                return "OK";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public string AdicionarParticipante(string nome, ParticipanteViewModel entity)
+        {
+            try
+            {
+                var usuario = Db.Usuario.FirstOrDefault(x => x.UserName == nome);
+                if (usuario == null)
+                    throw new Exception("Usuario invalido.");
+
+                bool alunoExistente = Db.Participante.Count(x => x.Matricula == entity.Matricula) > 0;
+
+                if (alunoExistente)
+                    throw new Exception("Usuario ja cadastrado.");
+
+                var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
+                alunoModel.Id = usuario.Id;
                 Db.Participante.Add(alunoModel);
                 Db.SaveChanges();
 

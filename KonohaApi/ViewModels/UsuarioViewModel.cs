@@ -16,7 +16,7 @@ namespace KonohaApi.ViewModels
         [Display(Name = "CPF")]
         public string Cpf { get; set; }
         
-        [Required]
+       
         [Display(Name = "Foto de perfil")]
         public string PathFotoPerfil { get; set; }
 

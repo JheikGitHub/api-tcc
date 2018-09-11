@@ -1,6 +1,9 @@
 namespace KonohaApi.Models
 {
+    using System;
     using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
 
     public partial class DataContext : DbContext
     {
@@ -18,6 +21,7 @@ namespace KonohaApi.Models
         public virtual DbSet<Funcionario> Funcionario { get; set; }
         public virtual DbSet<Participante> Participante { get; set; }
         public virtual DbSet<ParticipanteEvento> ParticipanteEvento { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<TopicoDiscucao> TopicoDiscucao { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
 
@@ -178,7 +182,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.Cpf)
                 .IsUnicode(false);
-            
+
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.PathFotoPerfil)
                 .IsUnicode(false);

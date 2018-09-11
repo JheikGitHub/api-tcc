@@ -50,7 +50,7 @@ namespace KonohaApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string resultado = DAO.Adicionar(model);
+            string resultado = DAO.AdicionarFuncionario(User.Identity.Name, model);
 
             if (resultado.Equals("OK"))
                 return StatusCode(HttpStatusCode.Created);

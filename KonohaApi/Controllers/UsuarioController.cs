@@ -239,8 +239,25 @@ namespace KonohaApi.Controllers
         }
 
         [HttpGet]
-        [Route("gerar-certificado/{id}")]
-        public HttpResponseMessage GerarCertificado(string id)
+        [Route("eventos-com-presenca-confirmada/{id:int}")]
+        public IHttpActionResult EventoConfirmacaoPresenca(int id)
+        {
+            if (id < 0)
+                return BadRequest("Não e valido valores negativos!");
+            try
+            {
+                var lista = DAO.ListaEventosComCorfimacaoPresenca(id);
+                return Ok(lista);
+            }
+            catch (Exception)
+            {
+                return InternalServerError();
+            }
+        }
+
+        [HttpPost]
+        [Route("gerar-certificado")]
+        public HttpResponseMessage GerarCertificado(EmitiCertificado certificado)
         {
 
             if (!ModelState.IsValid)
@@ -248,8 +265,10 @@ namespace KonohaApi.Controllers
 
             try
             {
+                string caminho = DAO.GerarPDF(certificado);
+
                 HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-                FileStream fileStream = File.OpenRead(DAO.GerarPDF(id));
+                FileStream fileStream = File.OpenRead(caminho);
                 response.Content = new StreamContent(fileStream);
 
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");

@@ -39,9 +39,7 @@ namespace KonohaApi.ViewModels
 
         [Required]
         [Display(Name = "Carga horária")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
-        public DateTime CargaHoraria { get; set; }
+        public string CargaHoraria { get; set; }
 
         [Required]
         [Display(Name = "Número")]

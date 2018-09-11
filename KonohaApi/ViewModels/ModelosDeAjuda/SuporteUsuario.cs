@@ -24,4 +24,15 @@ namespace KonohaApi.ViewModels.ModelosDeAjuda
         [Compare("NovaSenha", ErrorMessage = "A nova senha e a senha de confirmação não coincidem.")]
         public string ConfimarSenha { get; set; }
     }
+
+    public class EmitiCertificado
+    {
+        [Required]
+        [Display(Name = "Id do usuario")]
+        public int UsuarioId { get; set; }
+
+        [Required]
+        [Display(Name = "Id do evento")]
+        public int EventoId { get; set; }
+    }
 }
