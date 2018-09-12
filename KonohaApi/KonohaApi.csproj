@@ -171,6 +171,7 @@
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Estado.cs" />
     <Compile Include="Models\Evento.cs" />
+    <Compile Include="Models\EventoFuncionario.cs" />
     <Compile Include="Models\Faculdade.cs" />
     <Compile Include="Models\Funcionario.cs" />
     <Compile Include="Models\Participante.cs" />
@@ -208,6 +209,9 @@
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
     <Folder Include="Imagens\Usuario\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

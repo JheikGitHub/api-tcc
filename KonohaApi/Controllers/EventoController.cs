@@ -52,7 +52,7 @@ namespace KonohaApi.Controllers
                 return BadRequest(ModelState);
 
             string resultado = DAO.Adicionar(model);
-           
+
             if (resultado.Equals("OK"))
                 return StatusCode(HttpStatusCode.Created);
             else
@@ -99,7 +99,7 @@ namespace KonohaApi.Controllers
 
             return Ok(eventos);
         }
-        
+
         [HttpPost]
         [Route("cancelar-evento")]
         public IHttpActionResult CancelarEvento(MotivoCancelamentoEvento motivo)
@@ -161,6 +161,19 @@ namespace KonohaApi.Controllers
             else
                 return BadRequest(resultado);
 
+        }
+
+
+        [HttpGet]
+        [Route("busca-eventos-moderador/{id:int}")]
+        public IHttpActionResult ModeradorEvento(int id)
+        {
+            if (id < 0)
+                return BadRequest("Indice negativo");
+
+            var eventos = DAO.EventosModerador(id);
+
+            return Ok(eventos);
         }
 
         protected override void Dispose(bool disposing)

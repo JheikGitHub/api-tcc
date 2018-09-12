@@ -12,9 +12,9 @@ namespace KonohaApi.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Evento()
         {
+            EventoFuncionario = new HashSet<EventoFuncionario>();
             ParticipanteEvento = new HashSet<ParticipanteEvento>();
             TopicoDiscucao = new HashSet<TopicoDiscucao>();
-            Funcionario = new HashSet<Funcionario>();
         }
 
         public int Id { get; set; }
@@ -62,12 +62,12 @@ namespace KonohaApi.Models
         public virtual AgendaEvento AgendaEvento { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EventoFuncionario> EventoFuncionario { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ParticipanteEvento> ParticipanteEvento { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TopicoDiscucao> TopicoDiscucao { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Funcionario> Funcionario { get; set; }
     }
 }

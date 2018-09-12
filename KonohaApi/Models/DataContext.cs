@@ -17,6 +17,7 @@ namespace KonohaApi.Models
         public virtual DbSet<Comentario> Comentario { get; set; }
         public virtual DbSet<Estado> Estado { get; set; }
         public virtual DbSet<Evento> Evento { get; set; }
+        public virtual DbSet<EventoFuncionario> EventoFuncionario { get; set; }
         public virtual DbSet<Faculdade> Faculdade { get; set; }
         public virtual DbSet<Funcionario> Funcionario { get; set; }
         public virtual DbSet<Participante> Participante { get; set; }
@@ -42,7 +43,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<AgendaEvento>()
                 .HasMany(e => e.Evento)
                 .WithRequired(e => e.AgendaEvento)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Cidade>()
                 .Property(e => e.Nome)
@@ -51,7 +52,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Cidade>()
                 .HasMany(e => e.Faculdade)
                 .WithRequired(e => e.Cidade)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Comentario>()
                 .Property(e => e.Texto)
@@ -69,7 +70,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Estado>()
                 .HasMany(e => e.Cidade)
                 .WithRequired(e => e.Estado)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Evento>()
                 .Property(e => e.Nome)
@@ -100,19 +101,19 @@ namespace KonohaApi.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<Evento>()
+                .HasMany(e => e.EventoFuncionario)
+                .WithRequired(e => e.Evento)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Evento>()
                 .HasMany(e => e.ParticipanteEvento)
                 .WithRequired(e => e.Evento)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Evento>()
                 .HasMany(e => e.TopicoDiscucao)
                 .WithRequired(e => e.Evento)
-                .WillCascadeOnDelete(true);
-
-            modelBuilder.Entity<Evento>()
-                .HasMany(e => e.Funcionario)
-                .WithMany(e => e.Evento)
-                .Map(m => m.ToTable("EventoFuncionario").MapLeftKey("EventoId").MapRightKey("FuncionarioId"));
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Faculdade>()
                 .Property(e => e.Nome)
@@ -137,12 +138,17 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Faculdade>()
                 .HasMany(e => e.AgendaEvento)
                 .WithRequired(e => e.Faculdade)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Funcionario>()
                 .HasMany(e => e.AgendaEvento)
                 .WithRequired(e => e.Funcionario)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Funcionario>()
+                .HasMany(e => e.EventoFuncionario)
+                .WithRequired(e => e.Funcionario)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Participante>()
                 .Property(e => e.Matricula)
@@ -155,7 +161,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Participante>()
                 .HasMany(e => e.ParticipanteEvento)
                 .WithRequired(e => e.Participante)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ParticipanteEvento>()
                 .Property(e => e.CodigoValidacao)
@@ -173,7 +179,7 @@ namespace KonohaApi.Models
                 .HasMany(e => e.Comentario)
                 .WithRequired(e => e.TopicoDiscucao)
                 .HasForeignKey(e => e.TopicoId)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Usuario>()
                 .Property(e => e.Nome)
@@ -210,7 +216,7 @@ namespace KonohaApi.Models
             modelBuilder.Entity<Usuario>()
                 .HasMany(e => e.Comentario)
                 .WithRequired(e => e.Usuario)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Usuario>()
                 .HasOptional(e => e.Funcionario)

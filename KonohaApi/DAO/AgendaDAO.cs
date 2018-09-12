@@ -112,7 +112,10 @@ namespace KonohaApi.DAO
 
         public AgendaViewModel FiltrarAgenda(string nomeAgenda)
         {
-            var agendaModel = Db.AgendaEvento.FirstOrDefault(x => x.Nome.Contains(nomeAgenda));
+            var agendaModel = Db.AgendaEvento.FirstOrDefault(x => x.Nome.Equals(nomeAgenda));
+
+            if (agendaModel == null)
+                return null;
 
             var agendaViewModel = Mapper.Map<AgendaEvento, AgendaViewModel>(agendaModel);
 

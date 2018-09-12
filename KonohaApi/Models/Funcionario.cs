@@ -13,9 +13,10 @@ namespace KonohaApi.Models
         public Funcionario()
         {
             AgendaEvento = new HashSet<AgendaEvento>();
-            Evento = new HashSet<Evento>();
+            EventoFuncionario = new HashSet<EventoFuncionario>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public bool PermissaoCriarAgenda { get; set; }
@@ -25,9 +26,9 @@ namespace KonohaApi.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AgendaEvento> AgendaEvento { get; set; }
 
-        public virtual Usuario Usuario { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Evento> Evento { get; set; }
+        public virtual ICollection<EventoFuncionario> EventoFuncionario { get; set; }
+
+        public virtual Usuario Usuario { get; set; }
     }
 }

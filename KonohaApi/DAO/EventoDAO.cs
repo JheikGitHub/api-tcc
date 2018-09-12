@@ -27,9 +27,15 @@ namespace KonohaApi.DAO
                         Db.Evento.Add(eventoModel);
                         Db.SaveChanges();
 
-                        foreach (var item in eventoModel.Funcionario)
+                        foreach (var item in entity.Funcionario)
                         {
-                            eventoModel.Funcionario.Add(item);
+                            EventoFuncionario e = new EventoFuncionario
+                            {
+                                EventoId = eventoModel.Id,
+                                FuncionarioId = item.Id
+                            };
+
+                            Db.EventoFuncionario.Add(e);
                         }
                         Db.SaveChanges();
                         return "OK";
@@ -192,7 +198,7 @@ namespace KonohaApi.DAO
 
             return false;
         }
-        
+
         public ICollection<ParticipanteViewModel> ListaParticipanteDoEventos(int idEvento)
         {
             ICollection<ParticipanteViewModel> participantes = new List<ParticipanteViewModel>();
@@ -259,6 +265,19 @@ namespace KonohaApi.DAO
             {
                 return e.Message;
             }
+        }
+
+        public ICollection<EventoViewModel> EventosModerador(int id)
+        {
+            var res = Db.EventoFuncionario.Where(x => x.FuncionarioId == id).ToList();
+            ICollection<Evento> lista = new List<Evento>();
+
+            foreach (var item in res)
+            {
+                lista.Add(Db.Evento.Find(item.EventoId));
+            }
+            var eventos = Mapper.Map<ICollection<Evento>,ICollection<EventoViewModel>>(lista);
+            return eventos;
         }
     }
 }
