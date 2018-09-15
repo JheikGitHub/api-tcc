@@ -28,13 +28,21 @@ namespace KonohaApi.DAO
                     throw new Exception("Usuario ja cadastrado");
 
                 var usuarioModel = Mapper.Map<UsuarioViewModel, Usuario>(entity);
-                string path = "C:/KonohaApi/KonohaApi/Imagens/Usuario/";
-                string caminhoArquivo = Path.Combine(@path, Path.GetFileName(usuarioModel.PathFotoPerfil));
-                File.CreateText(caminhoArquivo);
+
+                string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+
+                var bits = Convert.FromBase64String(usuarioModel.PathFotoPerfil);
+
+                string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                string imgPath = Path.Combine(path, nomeImagem);
+
+                File.WriteAllBytes(imgPath, bits);
+
 
                 usuarioModel.DataCadastro = DateTime.Now;
                 usuarioModel.Ativo = true;
-                usuarioModel.PathFotoPerfil = caminhoArquivo;
+                usuarioModel.PathFotoPerfil = nomeImagem;
                 Db.Usuario.Add(usuarioModel);
                 Db.SaveChanges();
 
@@ -359,7 +367,7 @@ namespace KonohaApi.DAO
             textFormatter.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Justify;
             textFormatter.DrawString($"Certificamos para os devidos fins que {usuario.Nome}, CPF n.º {usuario.Cpf} participou do (a) Evento " +
                 $"{evento.Nome} ministrado(a) pelo(a) {evento.Apresentador}, durante a {agenda.Nome},no período de {agenda.DataInicio.Day} a " +
-                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria}"
+                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria}h"
                 , new XFont("Arial", 14, XFontStyle.Regular)
              , XBrushes.Black, new XRect(30, 180, page.Width - 60, page.Height - 60));
 

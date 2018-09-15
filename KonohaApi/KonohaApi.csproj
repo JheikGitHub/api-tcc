@@ -208,6 +208,7 @@
     <Folder Include="App_Start\" />
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
+    <Folder Include="Imagens\Eventos\" />
     <Folder Include="Imagens\Usuario\" />
   </ItemGroup>
   <ItemGroup>

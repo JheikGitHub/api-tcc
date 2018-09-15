@@ -5,7 +5,9 @@ using KonohaApi.ViewModels.ModelosDeAjuda;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Web;
 using static KonohaApi.ViewModels.MandaEmail;
 
 namespace KonohaApi.DAO
@@ -24,6 +26,17 @@ namespace KonohaApi.DAO
                     {
                         var eventoModel = Mapper.Map<EventoViewModel, Evento>(entity);
 
+                        string path = HttpContext.Current.Server.MapPath("~/Imagens/Eventos/");
+
+                        var bits = Convert.FromBase64String(eventoModel.PathImagem);
+
+                        string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                        string imgPath = Path.Combine(path, nomeImagem);
+
+                        File.WriteAllBytes(imgPath, bits);
+
+                        eventoModel.PathImagem = nomeImagem;
                         Db.Evento.Add(eventoModel);
                         Db.SaveChanges();
 
@@ -276,8 +289,20 @@ namespace KonohaApi.DAO
             {
                 lista.Add(Db.Evento.Find(item.EventoId));
             }
-            var eventos = Mapper.Map<ICollection<Evento>,ICollection<EventoViewModel>>(lista);
+            var eventos = Mapper.Map<ICollection<Evento>, ICollection<EventoViewModel>>(lista);
             return eventos;
+        }
+
+        public ICollection<UsuarioViewModel> ModeradoresEvento(int idEvento)
+        {
+            var res = Db.EventoFuncionario.Where(x => x.EventoId == idEvento).ToList();
+            ICollection<Usuario> lista = new List<Usuario>();
+            foreach (var item in res)
+            {
+                lista.Add(Db.Usuario.Find(item.FuncionarioId));
+            }
+            var funcionarios = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
+            return funcionarios;
         }
     }
 }

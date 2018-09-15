@@ -23,15 +23,15 @@ namespace KonohaApi.ViewModels
         [Required]
         [Display(Name = "Gênero")]
         public string Genero { get; set; }
-
-        [ScaffoldColumn(false)]
-        public DateTime DataCadastro { get; set; }
         
         [Required]
         [Display(Name = "Data de Nascimento")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime DataNascimento { get; set; }
+
+        [ScaffoldColumn(false)]
+        public DateTime DataCadastro { get; set; }
 
         [Required]
         [EmailAddress(ErrorMessage = "Email invalido")]

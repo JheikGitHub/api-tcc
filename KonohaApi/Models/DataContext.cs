@@ -10,6 +10,8 @@ namespace KonohaApi.Models
         public DataContext()
             : base("name=DataContext")
         {
+            Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = false;
         }
 
         public virtual DbSet<AgendaEvento> AgendaEvento { get; set; }

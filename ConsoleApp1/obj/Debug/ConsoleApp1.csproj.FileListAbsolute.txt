@@ -1,0 +1,7 @@
+C:\KonohaApi\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\KonohaApi\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\KonohaApi\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\KonohaApi\ConsoleApp1\obj\Debug\ConsoleApp1.csprojAssemblyReference.cache
+C:\KonohaApi\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\KonohaApi\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\KonohaApi\ConsoleApp1\obj\Debug\ConsoleApp1.pdb

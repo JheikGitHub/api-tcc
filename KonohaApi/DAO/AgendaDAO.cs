@@ -9,6 +9,7 @@ using System.Data.Entity;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Web;
 
 namespace KonohaApi.DAO
 {
@@ -29,22 +30,18 @@ namespace KonohaApi.DAO
 
                 var agendaModel = Mapper.Map<AgendaViewModel, AgendaEvento>(entity);
 
-                //converter base64 em imagem 
+                string path = HttpContext.Current.Server.MapPath("~/Imagens/Agenda/");
 
-                byte[] imageBytes = Convert.FromBase64String(agendaModel.PathImagem);
+                var bits = Convert.FromBase64String(agendaModel.PathImagem);
 
-                MemoryStream ms = new MemoryStream(imageBytes, 0,
-                  imageBytes.Length);
+                string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
 
-                ms.Write(imageBytes, 0, imageBytes.Length);
-                Image image = Image.FromStream(ms, true);
+                string imgPath = Path.Combine(path, nomeImagem);
 
-                var codigo = Guid.NewGuid();
-                string caminho = @"C:\KonohaApi\KonohaApi\Imagens\Agenda\" + codigo;
+                File.WriteAllBytes(imgPath, bits);
 
-                image.Save(caminho);
 
-                agendaModel.PathImagem = caminho;
+                agendaModel.PathImagem = nomeImagem;
                 Db.AgendaEvento.Add(agendaModel);
                 Db.SaveChanges();
 

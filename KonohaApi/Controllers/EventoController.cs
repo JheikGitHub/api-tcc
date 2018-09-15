@@ -147,6 +147,20 @@ namespace KonohaApi.Controllers
             return Ok(lista);
         }
 
+        [HttpGet]
+        [Route("numeros-de-inscritos/{id:int}")]
+        public IHttpActionResult NumerosInscritos(int id)
+        {
+            if (id < 0)
+                return BadRequest("Não e valido valores negativos!");
+
+            var lista = DAO.ListaParticipanteDoEventos(id);
+            var evento = DAO.BuscaPorId(id);
+
+            int inscritos = evento.NumeroVagas - lista.Count;
+            return Ok(inscritos);
+        }
+
         [HttpPost]
         [Route("confimacao-de-presenca-no-evento")]
         public IHttpActionResult ConfimacaoPresencaEvento(ConfimacaoParticipanteEvento confimacao)
@@ -166,7 +180,7 @@ namespace KonohaApi.Controllers
 
         [HttpGet]
         [Route("busca-eventos-moderador/{id:int}")]
-        public IHttpActionResult ModeradorEvento(int id)
+        public IHttpActionResult EventoModerador(int id)
         {
             if (id < 0)
                 return BadRequest("Indice negativo");
@@ -174,6 +188,17 @@ namespace KonohaApi.Controllers
             var eventos = DAO.EventosModerador(id);
 
             return Ok(eventos);
+        }
+        [HttpGet]
+        [Route("todos-moderadores/{id:int}")]
+        public IHttpActionResult Moderadores(int id)
+        {
+            if (id < 0)
+                return BadRequest("Indice negativo");
+
+            var funcionarios = DAO.ModeradoresEvento(id);
+
+            return Ok(funcionarios);
         }
 
         protected override void Dispose(bool disposing)
