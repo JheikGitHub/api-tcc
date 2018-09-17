@@ -1,7 +1,6 @@
 ﻿using KonohaApi.DAO;
 using KonohaApi.Models;
 using KonohaApi.ViewModels;
-using System;
 using System.Net;
 using System.Web.Http;
 

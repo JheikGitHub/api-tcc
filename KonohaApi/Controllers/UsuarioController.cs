@@ -150,7 +150,7 @@ namespace KonohaApi.Controllers
                 return NotFound();
 
             //coloca a url da pagina de alteração de senha 
-            var mesagem = new Uri("http://localhost:58360/api/usuario/recuperaSenha/" + usuario.Id);
+            var mesagem = new Uri("http://localhost:4200/recupera-senha/" + usuario.Id);
 
             GmailEmailService gmail = new GmailEmailService();
             EmailMessage msg = new EmailMessage

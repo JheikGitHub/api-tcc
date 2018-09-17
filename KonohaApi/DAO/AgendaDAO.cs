@@ -96,7 +96,7 @@ namespace KonohaApi.DAO
         {
             ICollection<EventoViewModel> eventos = new Collection<EventoViewModel>();
 
-            var agenda = Db.AgendaEvento.First(x => x.Nome == nomeAgenda);
+            var agenda = Db.AgendaEvento.FirstOrDefault(x => x.Nome.ToLower() == nomeAgenda.ToLower());
 
             if (agenda != null)
             {
@@ -109,14 +109,13 @@ namespace KonohaApi.DAO
 
         public AgendaViewModel FiltrarAgenda(string nomeAgenda)
         {
-            var agendaModel = Db.AgendaEvento.FirstOrDefault(x => x.Nome.Equals(nomeAgenda));
-
-            if (agendaModel == null)
-                return null;
-
-            var agendaViewModel = Mapper.Map<AgendaEvento, AgendaViewModel>(agendaModel);
-
-            return agendaViewModel;
+            var agendaModel = Db.AgendaEvento.FirstOrDefault(x => x.Nome.ToLower().Equals(nomeAgenda.ToLower()));
+            if (agendaModel != null)
+            {
+                var agendaViewModel = Mapper.Map<AgendaEvento, AgendaViewModel>(agendaModel);
+                return agendaViewModel;
+            }
+            return null;
         }
 
         public string Remove(int id)

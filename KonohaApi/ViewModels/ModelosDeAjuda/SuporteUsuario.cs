@@ -5,9 +5,9 @@ namespace KonohaApi.ViewModels.ModelosDeAjuda
     public class MudaSenhaCpf
     {
         [Required]
-        [StringLength(150, ErrorMessage = "O {0} deve ter pelo menos {2} caracteres.", MinimumLength = 7)]
+        [StringLength(14, ErrorMessage = "cpf contém 14 caracteres.")]
         [DataType(DataType.EmailAddress)]
-        [Display(Name = "E-mail")]
+        [Display(Name = "Cpf")]
         public string Cpf { get; set; }
     }
 
