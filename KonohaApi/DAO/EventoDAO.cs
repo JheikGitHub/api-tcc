@@ -231,7 +231,7 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var participante = Db.Participante.Find(confimacao.ParticipanteId);
+                var participante = Db.Participante.Find(confimacao.UsuarioId);
 
                 var usuario = Db.Usuario.Find(participante.Id);
 
@@ -246,30 +246,79 @@ namespace KonohaApi.DAO
                 if (agenda == null)
                     throw new Exception("Agenda não encontrada.");
 
-                var ExisteParticpanteInscrito = Db.ParticipanteEvento.Count(x => x.ParticipanteId == confimacao.ParticipanteId && x.EventoId == confimacao.EventoId) > 0;
+                var ExisteParticpanteInscrito = Db.ParticipanteEvento.Count(x => x.ParticipanteId == confimacao.UsuarioId
+                && x.EventoId == confimacao.EventoId && x.InscricaoPrevia == true) > 0;
 
                 if (ExisteParticpanteInscrito)
                 {
-                    if (participante.CodCarteirinha.Equals(confimacao.CodigoCarteiraEstudantil))
+                    var eventoIscricao = Db.ParticipanteEvento.FirstOrDefault(x => x.ParticipanteId == confimacao.UsuarioId
+                    && x.EventoId == confimacao.EventoId);
+
+                    eventoIscricao.ConfirmacaoPresenca = true;
+                    Db.Entry(eventoIscricao).State = EntityState.Modified;
+                    Db.SaveChanges();
+
+                    GmailEmailService gmail = new GmailEmailService();
+                    EmailMessage msg = new EmailMessage
                     {
-                        var eventoIscricao = Db.ParticipanteEvento.First(x => x.ParticipanteId == confimacao.ParticipanteId && x.EventoId == confimacao.EventoId);
+                        Body = $"<html><head> </head> <body>  <form method='POST'><h1>Aviso</h1><h3>Olá { usuario.Nome}</h3><p>Sua confimarçao de presença no evento {evento.Nome} foi realizada com sucesso!</p><p>Seu certificado ja esta pronto pra download.</p> </form></body> </html>",
+                        IsHtml = true,
+                        Subject = "Confirmação de presença",
+                        ToEmail = usuario.Email
+                    };
+                    gmail.SendEmailMessage(msg);
+                    return "OK";
+                }
+                throw new Exception("Usuario não inscrito nesse evento.");
+            }
 
-                        eventoIscricao.ConfirmacaoPresenca = true;
-                        Db.Entry(eventoIscricao).State = EntityState.Modified;
-                        Db.SaveChanges();
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
 
-                        GmailEmailService gmail = new GmailEmailService();
-                        EmailMessage msg = new EmailMessage
-                        {
-                            Body = $"<html><head> </head> <body>  <form method='POST'><h1>Aviso</h1><h3>Olá { usuario.Nome}</h3><p>Sua confimarçao de presença no evento {evento.Nome} foi realizada com sucesso!</p><p>Seu certificado ja esta pronto pra download.</p> </form></body> </html>",
-                            IsHtml = true,
-                            Subject = "Confirmação de presença",
-                            ToEmail = usuario.Email
-                        };
-                        gmail.SendEmailMessage(msg);
-                        return "OK";
-                    }
-                    throw new Exception("Codigo de carteira estudantil não encontrada.");
+        public string CancelarConfimacaoPresenca(ConfimacaoParticipanteEvento confimacao)
+        {
+            try
+            {
+                var participante = Db.Participante.Find(confimacao.UsuarioId);
+
+                var usuario = Db.Usuario.Find(participante.Id);
+
+                var evento = Db.Evento.Find(confimacao.EventoId);
+
+                var agenda = Db.AgendaEvento.Find(evento.AgendaEventoId);
+
+                if (usuario == null)
+                    throw new Exception("Usuario não encontrado.");
+                if (evento == null)
+                    throw new Exception("Evento não encontrado.");
+                if (agenda == null)
+                    throw new Exception("Agenda não encontrada.");
+
+                var ExisteParticpanteInscrito = Db.ParticipanteEvento.Count(x => x.ParticipanteId == confimacao.UsuarioId
+                && x.EventoId == confimacao.EventoId && x.InscricaoPrevia == true) > 0;
+
+                if (ExisteParticpanteInscrito)
+                {
+                    var eventoIscricao = Db.ParticipanteEvento.FirstOrDefault(x => x.ParticipanteId == confimacao.UsuarioId
+                    && x.EventoId == confimacao.EventoId);
+
+                    eventoIscricao.ConfirmacaoPresenca = false;
+                    Db.Entry(eventoIscricao).State = EntityState.Modified;
+                    Db.SaveChanges();
+
+                    GmailEmailService gmail = new GmailEmailService();
+                    EmailMessage msg = new EmailMessage
+                    {
+                        Body = $"<html><head> </head> <body>  <form method='POST'><h1>Aviso</h1><h3>Olá { usuario.Nome}</h3><p>Sua confimarçao de presença no evento {evento.Nome} foi cancelada!</p></form></body> </html>",
+                        IsHtml = true,
+                        Subject = "Confirmação de presença",
+                        ToEmail = usuario.Email
+                    };
+                    gmail.SendEmailMessage(msg);
+                    return "OK";
                 }
                 throw new Exception("Usuario não inscrito nesse evento.");
             }

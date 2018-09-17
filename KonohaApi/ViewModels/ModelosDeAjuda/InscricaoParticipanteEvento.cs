@@ -28,14 +28,11 @@ namespace KonohaApi.ViewModels
     {
         [Required]
         [Display(Name = "Id do Participante")]
-        public int ParticipanteId { get; set; }
+        public int UsuarioId { get; set; }
 
         [Required]
         [Display(Name = "Id do evento")]
         public int EventoId { get; set; }
 
-        [Required]
-        [Display(Name = "Carteirinha Estudantil")]
-        public string CodigoCarteiraEstudantil { get; set; }
     }
 }

@@ -168,7 +168,11 @@ namespace KonohaApi.DAO
 
         public UsuarioViewModel BuscaPorCpf(string cpf)
         {
-            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(Db.Usuario.First(x => x.Cpf == cpf));
+            var usuarioModel = Db.Usuario.FirstOrDefault(x => x.Cpf == cpf);
+            if (usuarioModel == null)
+                return null;
+
+            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(usuarioModel);
 
             return usuarioViewModel;
         }

@@ -177,6 +177,21 @@ namespace KonohaApi.Controllers
 
         }
 
+        [HttpPost]
+        [Route("cancelar-confimacao-de-presenca-no-evento")]
+        public IHttpActionResult CancelarConfimacaoPresencaEvento(ConfimacaoParticipanteEvento confimacao)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string resultado = DAO.CancelarConfimacaoPresenca(confimacao);
+
+            if (resultado.Equals("OK"))
+                return Ok();
+            else
+                return BadRequest(resultado);
+
+        }
 
         [HttpGet]
         [Route("busca-eventos-moderador/{id:int}")]
