@@ -43,6 +43,18 @@ namespace KonohaApi.Controllers
             return Ok(eventoViewModel);
         }
 
+        [HttpGet]
+        [Route("busca-por-nome/{id}")]
+        public IHttpActionResult BuscaPorNome(string id)
+        {
+            var eventoViewModel = DAO.BuscaPorNome(id);
+
+            if (eventoViewModel == null)
+                return NotFound();
+
+            return Ok(eventoViewModel);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("adiciona")]

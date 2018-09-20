@@ -20,7 +20,7 @@ namespace KonohaApi.DAO
 
         public string Adicionar(UsuarioViewModel entity)
         {
-            bool usuarioExistente = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf) > 0;
+            bool usuarioExistente = Db.Usuario.Count(x => x.UserName == entity.UserName && x.Cpf == entity.Cpf) > 0;
             try
             {
                 if (usuarioExistente)
@@ -28,22 +28,26 @@ namespace KonohaApi.DAO
 
                 var usuarioModel = Mapper.Map<UsuarioViewModel, Usuario>(entity);
 
-                string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+                if (usuarioModel.PathFotoPerfil != "")
+                {
+                    string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
 
-                var bits = Convert.FromBase64String(usuarioModel.PathFotoPerfil);
+                    var bits = Convert.FromBase64String(usuarioModel.PathFotoPerfil);
 
-                string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+                    string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
 
-                string imgPath = Path.Combine(path, nomeImagem);
+                    string imgPath = Path.Combine(path, nomeImagem);
 
-                File.WriteAllBytes(imgPath, bits);
+                    File.WriteAllBytes(imgPath, bits);
 
+                    usuarioModel.PathFotoPerfil = nomeImagem;
+                }
 
                 usuarioModel.DataCadastro = DateTime.Now;
                 usuarioModel.Ativo = true;
-                usuarioModel.PathFotoPerfil = nomeImagem;
-                Db.Usuario.Add(usuarioModel);
-                Db.SaveChanges();
+
+               // Db.Usuario.Add(usuarioModel);
+                //Db.SaveChanges();
 
                 return "OK";
             }

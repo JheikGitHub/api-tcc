@@ -15,15 +15,15 @@ namespace KonohaApi.ViewModels
         [Required]
         [Display(Name = "CPF")]
         public string Cpf { get; set; }
-        
-       
+
+
         [Display(Name = "Foto de perfil")]
         public string PathFotoPerfil { get; set; }
 
         [Required]
         [Display(Name = "Gênero")]
         public string Genero { get; set; }
-        
+
         [Required]
         [Display(Name = "Data de Nascimento")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
@@ -39,7 +39,7 @@ namespace KonohaApi.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Username")]
+        [Display(Name = "UserName")]
         public string UserName { get; set; }
 
         [Required]
@@ -55,5 +55,5 @@ namespace KonohaApi.ViewModels
         public string Perfil { get; set; }
 
     }
-    
+
 }

@@ -56,18 +56,6 @@ namespace KonohaApi.Controllers
         }
 
         [HttpPost]
-        [Route("busca-por-cpf")]
-        public IHttpActionResult BuscaPorCpf(MudaSenhaCpf model)
-        {
-            var usuarioViewModel = DAO.BuscaPorCpf(model.Cpf);
-
-            if (usuarioViewModel == null)
-                return NotFound();
-
-            return Ok(usuarioViewModel);
-        }
-
-        [HttpPost]
         [AllowAnonymous]
         [Route("adiciona")]
         public IHttpActionResult Salvar(UsuarioViewModel model)

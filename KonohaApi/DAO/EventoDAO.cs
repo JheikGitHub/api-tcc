@@ -65,10 +65,25 @@ namespace KonohaApi.DAO
 
         public EventoViewModel BuscaPorId(int id)
         {
-            var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(Db.Evento.Find(id));
+            var evento = Db.Evento.Find(id);
+            if (evento == null)
+                return null;
+
+            var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(evento);
+
             return eventoViewModel;
         }
 
+        public EventoViewModel BuscaPorNome(string nome)
+        {
+            var evento = Db.Evento.FirstOrDefault(x => x.Nome == nome);
+            if (evento == null)
+                return null;
+
+            var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(evento);
+
+            return eventoViewModel;
+        }
         public void Dispose()
         {
             Db.Dispose();

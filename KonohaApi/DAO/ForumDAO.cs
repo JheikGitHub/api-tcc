@@ -11,6 +11,18 @@ namespace KonohaApi.DAO
     public class ForumDAO : BaseDAO, IDisposable
     {
         #region Topico
+
+        public TopicoViewModel BuscaPorNome(string nome)
+        {
+            var topico = Db.TopicoDiscucao.FirstOrDefault(x => x.Nome == nome);
+            if (topico == null)
+                return null;
+
+            var topicoViewModel = Mapper.Map<TopicoDiscucao, TopicoViewModel>(topico);
+
+            return topicoViewModel;
+        }
+
         public string AdicionaTopico(TopicoViewModel topicoViewModel)
         {
             try
@@ -73,6 +85,18 @@ namespace KonohaApi.DAO
         {
             var topicos = Mapper.Map<ICollection<TopicoDiscucao>, ICollection<TopicoViewModel>>(Db.TopicoDiscucao.ToList());
             return topicos;
+        }
+
+        public ICollection<TopicoViewModel> BuscaTopicosDoEvento(int EventoId)
+        {
+            var topicos = Db.TopicoDiscucao.Where(x => x.EventoId == EventoId).ToList();
+
+            if (topicos == null)
+                return null;
+
+            var topicoViewModels = Mapper.Map<ICollection<TopicoDiscucao>, ICollection<TopicoViewModel>>(topicos);
+
+            return topicoViewModels;
         }
 
         #endregion
@@ -145,6 +169,7 @@ namespace KonohaApi.DAO
             var comentarios = Mapper.Map<ICollection<Comentario>, ICollection<ComentarioViewModel>>(Db.Comentario.Where(x => x.ParentId == ComentarioPaiId).ToList());
             return comentarios;
         }
+
 
         #endregion
 
