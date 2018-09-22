@@ -65,6 +65,7 @@ namespace KonohaApi.Controllers
             return Ok(topicos);
         }
 
+
         [HttpGet]
         [Route("busca-topicos-por-nome/{id}")]
         public IHttpActionResult BuscaTopicosPorNome(string id)
@@ -78,6 +79,14 @@ namespace KonohaApi.Controllers
         {
             var comentarios = DAO.BuscaTopicosDoEvento(id);
             return Ok(comentarios);
+        }
+
+        [HttpGet]
+        [Route("busca-topicos-do-evento-por-nome/{nomeEvento}")]
+        public IHttpActionResult BuscaTodosTopicosEventoPorNome(string nomeEvento)
+        {
+            var topicos = DAO.BuscaTopicosDoEventoPorNome(nomeEvento);
+            return Ok(topicos);
         }
 
         [HttpGet]
