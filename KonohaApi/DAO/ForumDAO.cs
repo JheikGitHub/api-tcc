@@ -99,6 +99,18 @@ namespace KonohaApi.DAO
             return topicoViewModels;
         }
 
+        public ICollection<TopicoViewModel> BuscaTopicosDoEventoPorNome(string nomeEvento)
+        {
+            var topicos = Db.TopicoDiscucao.Where(x => x.Evento.Nome == nomeEvento).ToList();
+
+            if (topicos == null)
+                return null;
+
+            var topicoViewModels = Mapper.Map<ICollection<TopicoDiscucao>, ICollection<TopicoViewModel>>(topicos);
+
+            return topicoViewModels;
+        }
+
         #endregion
 
         #region Comentario
