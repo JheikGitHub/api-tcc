@@ -83,8 +83,13 @@ namespace KonohaApi.DAO
         {
             var funcionarioModel = Db.Funcionario.ToList();
 
-            var funcionarioViewModel = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(funcionarioModel);
+            foreach (var item in funcionarioModel)
+            {
+                Db.Funcionario.Include("Usuario").Where(x => x.Usuario.Id == item.Id).ToList();
+            }
 
+            var funcionarioViewModel = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(funcionarioModel);
+         
             return funcionarioViewModel;
         }
 

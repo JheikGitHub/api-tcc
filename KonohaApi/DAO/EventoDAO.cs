@@ -357,15 +357,16 @@ namespace KonohaApi.DAO
             return eventos;
         }
 
-        public ICollection<UsuarioViewModel> ModeradoresEvento(int idEvento)
+        public ICollection<FuncionarioViewModel> ModeradoresEvento(int idEvento)
         {
             var res = Db.EventoFuncionario.Where(x => x.EventoId == idEvento).ToList();
-            ICollection<Usuario> lista = new List<Usuario>();
+            ICollection<Funcionario> lista = new List<Funcionario>();
             foreach (var item in res)
             {
-                lista.Add(Db.Usuario.Find(item.FuncionarioId));
+                lista.Add(Db.Funcionario.Include("Usuario").FirstOrDefault(x => x.Id == item.FuncionarioId));
             }
-            var funcionarios = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
+            var funcionarios = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(lista);
+
             return funcionarios;
         }
     }

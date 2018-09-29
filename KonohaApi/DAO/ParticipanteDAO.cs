@@ -95,9 +95,14 @@ namespace KonohaApi.DAO
 
         public ICollection<ParticipanteViewModel> ListaTodos()
         {
-            var alunos = Db.Participante.ToList();
+            var participantes = Db.Participante.ToList();
 
-            var alunoViewModel = Mapper.Map<ICollection<Participante>, ICollection<ParticipanteViewModel>>(alunos);
+            foreach (var item in participantes)
+            {
+                Db.Participante.Include("Usuario").Where(x => x.Usuario.Id == item.Id).ToList();
+            }
+
+            var alunoViewModel = Mapper.Map<ICollection<Participante>, ICollection<ParticipanteViewModel>>(participantes);
 
             return alunoViewModel;
         }

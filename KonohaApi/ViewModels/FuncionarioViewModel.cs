@@ -14,6 +14,8 @@ namespace KonohaApi.ViewModels
         [Required]
         [Display(Name = "Permissao para criar agenda")]
         public bool PermissaoCriarAgenda { get; set; }
-        
+
+        public UsuarioViewModel Usuario { get; set; }
+
     }
 }

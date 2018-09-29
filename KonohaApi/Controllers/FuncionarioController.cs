@@ -1,6 +1,7 @@
 ﻿using KonohaApi.DAO;
 using KonohaApi.Models;
 using KonohaApi.ViewModels;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 
@@ -28,7 +29,7 @@ namespace KonohaApi.Controllers
         public IHttpActionResult BuscaTodos()
         {
             var funcionarios = DAO.ListaTodos();
-
+         
             return Ok(funcionarios);
         }
 

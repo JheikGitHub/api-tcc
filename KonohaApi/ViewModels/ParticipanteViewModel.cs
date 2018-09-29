@@ -18,5 +18,6 @@ namespace KonohaApi.ViewModels
         [Required]
         public bool IsAluno { get; set; }
 
+        public UsuarioViewModel Usuario { get; set; }
     }
 }
