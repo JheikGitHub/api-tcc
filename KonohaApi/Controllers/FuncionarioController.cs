@@ -29,7 +29,7 @@ namespace KonohaApi.Controllers
         public IHttpActionResult BuscaTodos()
         {
             var funcionarios = DAO.ListaTodos();
-         
+
             return Ok(funcionarios);
         }
 
@@ -37,6 +37,9 @@ namespace KonohaApi.Controllers
         [Route("busca-por-id/{id:int}")]
         public IHttpActionResult BuscaPorId(int id)
         {
+            if (id < 0)
+                return BadRequest("indice inválido");
+
             var funcionarioViewModel = DAO.BuscaPorId(id);
 
             return Ok(funcionarioViewModel);
@@ -91,6 +94,18 @@ namespace KonohaApi.Controllers
 
             return BadRequest(resultado);
 
+        }
+
+        [HttpGet]
+        [Route("agendas-do-funcionario/{id:int}")]
+        public IHttpActionResult AgendaFuncionario(int id)
+        {
+            if (id < 0)
+                return BadRequest("indice inválido");
+
+            var agendas = DAO.AgendasDoFuncionario(id);
+
+            return Ok(agendas);
         }
     }
 }

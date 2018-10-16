@@ -23,6 +23,16 @@ namespace KonohaApi.Controllers
             set => _dao = value;
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route("participante-logado")]
+        public IHttpActionResult ObterParticipante()
+        {
+            var acessUser = DAO.GetParticipanteLogado(User.Identity.Name);
+            return Ok(acessUser);
+        }
+
         // GET: api/Aluno
         [HttpGet]
         [Route("busca-todos")]
@@ -43,7 +53,7 @@ namespace KonohaApi.Controllers
         }
 
         // PUT: api/Aluno/5
-        [HttpPut]
+        [HttpPatch]
         [Route("altera/{id:int}")]
         [ResponseType(typeof(void))]
         public IHttpActionResult Editar(int id, ParticipanteViewModel aluno)
@@ -64,6 +74,27 @@ namespace KonohaApi.Controllers
             else
                 return BadRequest(resultado);
 
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("adiciona-participante")]
+        [ResponseType(typeof(Participante))]
+        public IHttpActionResult SalvarParticipante(ParticipanteViewModel aluno)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string resultado = DAO.AdicionarParticipante(User.Identity.Name, aluno);
+
+            if (resultado.Equals("OK"))
+            {
+                return StatusCode(HttpStatusCode.Created);
+            }
+            else
+                return BadRequest(resultado);
         }
 
         // POST: api/Aluno

@@ -5,13 +5,15 @@ using KonohaApi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Web;
 
 namespace KonohaApi.DAO
 {
     public class ParticipanteDAO : BaseDAO, ICrud<ParticipanteViewModel>, IDisposable
     {
-        
+
         #region Crud Participante
         public string Adicionar(ParticipanteViewModel entity)
         {
@@ -22,7 +24,9 @@ namespace KonohaApi.DAO
                 if (alunoExistente)
                     throw new Exception("Usuario ja cadastrado.");
 
+
                 var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
+
                 Db.Participante.Add(alunoModel);
                 Db.SaveChanges();
 
@@ -47,8 +51,24 @@ namespace KonohaApi.DAO
                 if (alunoExistente)
                     throw new Exception("Usuario ja cadastrado.");
 
+                if (entity.Usuario.PathFotoPerfil != "")
+                {
+                    string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+
+                    var bits = Convert.FromBase64String(entity.Usuario.PathFotoPerfil);
+
+                    string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                    string imgPath = Path.Combine(path, nomeImagem);
+
+                    File.WriteAllBytes(imgPath, bits);
+
+                    entity.Usuario.PathFotoPerfil = nomeImagem;
+                }
+                entity.Usuario.Ativo = true;
+                entity.Usuario.DataCadastro = DateTime.Now;
                 var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
-                alunoModel.Id = usuario.Id;
+
                 Db.Participante.Add(alunoModel);
                 Db.SaveChanges();
 
@@ -62,9 +82,16 @@ namespace KonohaApi.DAO
 
         public ParticipanteViewModel BuscaPorId(int id)
         {
-            var alunoViewModel = Mapper.Map<Participante, ParticipanteViewModel>(Db.Participante.First(x => x.Id == id));
+            var alunoViewModel = Mapper.Map<Participante, ParticipanteViewModel>(Db.Participante.Include("Usuario").FirstOrDefault(x => x.Id == id));
 
             return alunoViewModel;
+        }
+
+        public ParticipanteViewModel GetParticipanteLogado(string username)
+        {
+            var participanteView = Mapper.Map<Participante, ParticipanteViewModel>(Db.Participante.Include("Usuario").FirstOrDefault(x => x.Usuario.UserName == username));
+
+            return participanteView;
         }
 
         public void Dispose()
@@ -76,13 +103,17 @@ namespace KonohaApi.DAO
         {
             try
             {
+                var participanteModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
+              
+                Db.Participante.Attach(participanteModel);
+
                 bool alunoExistente = Db.Participante.Count(x => x.Matricula == entity.Matricula) > 1;
+
                 if (alunoExistente)
                     throw new Exception("Aluno existente.");
 
-                var alunoModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
-
-                Db.Entry(alunoModel).State = EntityState.Modified;
+                Db.Entry(participanteModel).State = EntityState.Modified;
+                Db.Entry(participanteModel.Usuario).State = EntityState.Modified;
                 Db.SaveChanges();
                 return "OK";
             }

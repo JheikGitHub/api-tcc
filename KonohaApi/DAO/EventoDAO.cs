@@ -37,6 +37,8 @@ namespace KonohaApi.DAO
                         File.WriteAllBytes(imgPath, bits);
 
                         eventoModel.PathImagem = nomeImagem;
+                        eventoModel.Cancelado = false;
+
                         Db.Evento.Add(eventoModel);
                         Db.SaveChanges();
 
@@ -50,6 +52,8 @@ namespace KonohaApi.DAO
 
                             Db.EventoFuncionario.Add(e);
                         }
+
+
                         Db.SaveChanges();
                         return "OK";
                     }
@@ -68,8 +72,18 @@ namespace KonohaApi.DAO
             var evento = Db.Evento.Find(id);
             if (evento == null)
                 return null;
-
             var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(evento);
+
+            var res = Db.EventoFuncionario.Where(x => x.EventoId == evento.Id).ToList();
+
+            ICollection<Funcionario> lista = new List<Funcionario>();
+            foreach (var item in res)
+            {
+                lista.Add(Db.Funcionario.Include("Usuario").FirstOrDefault(x => x.Id == item.FuncionarioId));
+            }
+            var funcionarios = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(lista);
+
+            eventoViewModel.Funcionario = funcionarios;
 
             return eventoViewModel;
         }
@@ -93,7 +107,27 @@ namespace KonohaApi.DAO
         {
             try
             {
+                string path = HttpContext.Current.Server.MapPath("~/Imagens/Evento/");
+
+                var bits = Convert.FromBase64String(entity.PathImagem);
+
+                string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                string imgPath = Path.Combine(path, nomeImagem);
+
+                File.WriteAllBytes(imgPath, bits);
+
+                entity.PathImagem = nomeImagem;
+
                 var eventoModel = Mapper.Map<EventoViewModel, Evento>(entity);
+
+                Db.Evento.Attach(eventoModel);
+
+                var evento = Db.Evento.FirstOrDefault(x => x.Id == entity.Id);
+                var existeFoto = Path.Combine(path, evento.PathImagem);
+
+                if (File.Exists(existeFoto))
+                    File.Delete(existeFoto);
 
                 Db.Entry(eventoModel).State = EntityState.Modified;
                 Db.SaveChanges();
@@ -123,9 +157,13 @@ namespace KonohaApi.DAO
                 if (evento == null)
                     throw new Exception("Evento não encotrado.");
 
-                foreach (var m in Db.ParticipanteEvento.Where(f => f.EventoId == evento.Id))
+                foreach (var m in Db.ParticipanteEvento.Where(f => f.EventoId == evento.Id).ToList())
                 {
                     Db.ParticipanteEvento.Remove(m);
+                }
+                foreach (var m in Db.EventoFuncionario.Where(f => f.EventoId == evento.Id).ToList())
+                {
+                    Db.EventoFuncionario.Remove(m);
                 }
 
                 Db.SaveChanges();
@@ -357,17 +395,18 @@ namespace KonohaApi.DAO
             return eventos;
         }
 
-        public ICollection<FuncionarioViewModel> ModeradoresEvento(int idEvento)
+        public ICollection<UsuarioViewModel> ModeradoresEvento(int id)
         {
-            var res = Db.EventoFuncionario.Where(x => x.EventoId == idEvento).ToList();
-            ICollection<Funcionario> lista = new List<Funcionario>();
+            var res = Db.EventoFuncionario.Where(x => x.EventoId == id).ToList();
+            ICollection<Usuario> lista = new List<Usuario>();
+
             foreach (var item in res)
             {
-                lista.Add(Db.Funcionario.Include("Usuario").FirstOrDefault(x => x.Id == item.FuncionarioId));
+                lista.Add(Db.Usuario.Find(item.EventoId));
             }
-            var funcionarios = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(lista);
-
-            return funcionarios;
+            var eventos = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
+            return eventos;
         }
+
     }
 }

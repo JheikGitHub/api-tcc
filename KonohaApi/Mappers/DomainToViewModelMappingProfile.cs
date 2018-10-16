@@ -10,6 +10,7 @@ namespace KonohaApi.Mappers
         {
             CreateMap<Usuario, UsuarioViewModel>();
             CreateMap<Evento, EventoViewModel>();
+            CreateMap<Participante, ParticipanteViewModel>();
             CreateMap<Funcionario, FuncionarioViewModel>();
             CreateMap<AgendaEvento, AgendaViewModel>();
             CreateMap<Comentario, ComentarioViewModel>();

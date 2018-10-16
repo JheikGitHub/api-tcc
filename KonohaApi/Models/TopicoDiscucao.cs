@@ -15,7 +15,6 @@ namespace KonohaApi.Models
             Comentario = new HashSet<Comentario>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Required]

@@ -21,9 +21,10 @@ namespace KonohaApi.DAO
             {
                 bool agendaExistente = Db.AgendaEvento.Count(x => x.Nome == entity.Nome) > 0;
 
-                if ((Db.Funcionario.Count(x => x.Id == entity.FuncionarioId) > 0)
-                    && (Db.Faculdade.Count(x => x.Id == entity.FaculdadeId) > 0))
-                    throw new Exception("Funcionario ou Faculdade não existente.");
+                var funcionario = Db.Funcionario.Find(entity.FuncionarioId);
+
+                if (funcionario == null)
+                    throw new Exception("funcionario não encontrado.");
 
                 if (agendaExistente)
                     throw new Exception("Agenda ja cadastrada.");
@@ -40,8 +41,9 @@ namespace KonohaApi.DAO
 
                 File.WriteAllBytes(imgPath, bits);
 
-
+                agendaModel.FaculdadeId = 1;
                 agendaModel.PathImagem = nomeImagem;
+
                 Db.AgendaEvento.Add(agendaModel);
                 Db.SaveChanges();
 
@@ -61,19 +63,35 @@ namespace KonohaApi.DAO
             return agendaViewModel;
         }
 
+       
         public string Editar(AgendaViewModel entity)
         {
             try
             {
-                var usuario = Db.Usuario.Count(x => x.Nome == entity.Nome && x.Id != entity.Id) > 0;
+                string path = HttpContext.Current.Server.MapPath("~/Imagens/Agenda/");
 
-                if (usuario)
-                    throw new Exception("Usuario ja cadastrado com mesmo UserName ou CPF.");
+                var bits = Convert.FromBase64String(entity.PathImagem);
 
+                string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                string imgPath = Path.Combine(path, nomeImagem);
+
+                File.WriteAllBytes(imgPath, bits);
+               
+                entity.PathImagem = nomeImagem;
                 var agendaModel = Mapper.Map<AgendaViewModel, AgendaEvento>(entity);
+
+                Db.AgendaEvento.Attach(agendaModel);
+
+                var agenda = Db.AgendaEvento.FirstOrDefault(x => x.Id == entity.Id);
+                var existeFoto = Path.Combine(path, agenda.PathImagem);
+
+                if (File.Exists(existeFoto))
+                    File.Delete(existeFoto);
 
                 Db.Entry(agendaModel).State = EntityState.Modified;
                 Db.SaveChanges();
+               
                 return "OK";
             }
             catch (Exception e)

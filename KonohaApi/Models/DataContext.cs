@@ -1,17 +1,12 @@
 namespace KonohaApi.Models
 {
-    using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
 
     public partial class DataContext : DbContext
     {
         public DataContext()
             : base("name=DataContext")
         {
-            Configuration.LazyLoadingEnabled = false;
-            Configuration.ProxyCreationEnabled = false;
         }
 
         public virtual DbSet<AgendaEvento> AgendaEvento { get; set; }

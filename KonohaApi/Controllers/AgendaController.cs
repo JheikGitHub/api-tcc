@@ -93,11 +93,6 @@ namespace KonohaApi.Controllers
                 return BadRequest();
             }
 
-            var existente = DAO.NomeExistente(model.Nome);
-
-            if (existente)
-                return BadRequest("Agenda ja existe.");
-
             string resultado = DAO.Editar(model);
 
             if (resultado.Equals("OK"))
@@ -107,7 +102,7 @@ namespace KonohaApi.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [Route("remove/{id:int}")]
         public IHttpActionResult Remove(int id)
         {

@@ -216,16 +216,17 @@ namespace KonohaApi.Controllers
 
             return Ok(eventos);
         }
+
         [HttpGet]
-        [Route("todos-moderadores/{id:int}")]
-        public IHttpActionResult Moderadores(int id)
+        [Route("busca-moderadores-evento/{id:int}")]
+        public IHttpActionResult ModeradoresEvento(int id)
         {
             if (id < 0)
                 return BadRequest("Indice negativo");
 
-            var funcionarios = DAO.ModeradoresEvento(id);
+            var eventos = DAO.ModeradoresEvento(id);
 
-            return Ok(funcionarios);
+            return Ok(eventos);
         }
 
         protected override void Dispose(bool disposing)

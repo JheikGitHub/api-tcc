@@ -31,10 +31,8 @@ namespace KonohaApi.Models
         [StringLength(100)]
         public string Local { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime DataInicio { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime DataEncerramento { get; set; }
 
         [Required]

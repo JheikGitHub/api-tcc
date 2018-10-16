@@ -23,13 +23,11 @@ namespace KonohaApi.ViewModels
 
         [Required]
         [Display(Name = "Data de inicio")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime DataInicio { get; set; }
 
         [Required]
         [Display(Name = "Data de encerramento")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [DataType(DataType.Date, ErrorMessage = "Data em formato inválido")]
         public DateTime DataEncerramento { get; set; }
 
@@ -52,14 +50,12 @@ namespace KonohaApi.ViewModels
         [Required]
         [Display(Name = "Tipo do evento")]
         public string TipoEvento { get; set; }
-
-        [Required]
-        [Display(Name = "Evento Cancelado")]
-        public bool Cancelado { get; set; }
-
+        
         [Required]
         [Display(Name = "Agenda de eventos")]
         public int AgendaEventoId { get; set; }
+
+        public AgendaViewModel AgendaEvento { get; set; }
 
         public ICollection<FuncionarioViewModel> Funcionario { get; set; }
     }

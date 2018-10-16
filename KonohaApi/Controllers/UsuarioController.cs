@@ -3,6 +3,7 @@ using KonohaApi.ViewModels;
 using KonohaApi.ViewModels.ModelosDeAjuda;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -37,9 +38,9 @@ namespace KonohaApi.Controllers
 
         [HttpGet]
         [Route("busca-todos")]
-        public IHttpActionResult BuscaTodos()
+        public IHttpActionResult BuscaTodos(int pageSize, int pageIndex)
         {
-            var usuarios = DAO.ListaTodos();
+            var usuarios = DAO.ListaTodos().Skip((pageSize - 1) * pageIndex).Take(pageIndex).ToList();
             return Ok(usuarios);
         }
 
@@ -56,6 +57,19 @@ namespace KonohaApi.Controllers
         }
 
         [HttpPost]
+        [Route("busca-por-cpf")]
+        public IHttpActionResult BuscaPorCpf(MudaSenhaCpf cpf)
+        {
+            var usuarioViewModel = DAO.BuscaPorCpf(cpf);
+
+            if (usuarioViewModel == null)
+                return NotFound();
+
+            return Ok(usuarioViewModel);
+        }
+
+
+        [HttpPost]
         [AllowAnonymous]
         [Route("adiciona")]
         public IHttpActionResult Salvar(UsuarioViewModel model)
@@ -69,6 +83,21 @@ namespace KonohaApi.Controllers
             {
                 return StatusCode(HttpStatusCode.Created);
             }
+            else
+                return BadRequest(resultado);
+        }
+
+        [HttpPatch]
+        [Route("alterar-foto")]
+        public IHttpActionResult AlterarFoto(UsuarioViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string resultado = DAO.AltararFoto(model.Id, model.PathFotoPerfil);
+
+            if (resultado.Equals("OK"))
+                return StatusCode(HttpStatusCode.NoContent);
             else
                 return BadRequest(resultado);
         }
@@ -144,7 +173,7 @@ namespace KonohaApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var usuario = DAO.BuscaPorCpf(model.Cpf);
+            var usuario = DAO.BuscaPorCpf(model);
 
             if (usuario == null)
                 return NotFound();
@@ -204,6 +233,13 @@ namespace KonohaApi.Controllers
                 return Ok();
             else
                 return BadRequest(resultado);
+        }
+
+        [HttpPost]
+        [Route("verificar-inscricao")]
+        public bool VerificaInscricao(InscricaoParticipanteEvento inscricao)
+        {
+            return DAO.VerificarInscricao(inscricao);
         }
 
         [HttpPost]

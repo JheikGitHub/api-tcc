@@ -5,7 +5,9 @@ using KonohaApi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Web;
 
 namespace KonohaApi.DAO
 {
@@ -37,8 +39,25 @@ namespace KonohaApi.DAO
                 if (usuario == null)
                     throw new Exception("Usuario invalido.");
 
+                if (entity.Usuario.PathFotoPerfil != "")
+                {
+                    string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+
+                    var bits = Convert.FromBase64String(entity.Usuario.PathFotoPerfil);
+
+                    string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                    string imgPath = Path.Combine(path, nomeImagem);
+
+                    File.WriteAllBytes(imgPath, bits);
+
+                    entity.Usuario.PathFotoPerfil = nomeImagem;
+                }
+                entity.Usuario.DataCadastro = DateTime.Now;
+                entity.Usuario.Ativo = true;
+
                 var funcionarioModel = Mapper.Map<FuncionarioViewModel, Funcionario>(entity);
-                funcionarioModel.Id = usuario.Id;
+               
                 Db.Funcionario.Add(funcionarioModel);
                 Db.SaveChanges();
                 return "OK";
@@ -69,6 +88,7 @@ namespace KonohaApi.DAO
                 var funcionarioModel = Mapper.Map<FuncionarioViewModel, Funcionario>(entity);
 
                 Db.Entry(funcionarioModel).State = EntityState.Modified;
+                Db.Entry(funcionarioModel.Usuario).State = EntityState.Modified;
                 Db.SaveChanges();
 
                 return "OK";
@@ -89,7 +109,7 @@ namespace KonohaApi.DAO
             }
 
             var funcionarioViewModel = Mapper.Map<ICollection<Funcionario>, ICollection<FuncionarioViewModel>>(funcionarioModel);
-         
+
             return funcionarioViewModel;
         }
 
@@ -113,7 +133,18 @@ namespace KonohaApi.DAO
             }
 
         }
+
         #endregion
 
+        public ICollection<AgendaViewModel> AgendasDoFuncionario(int id)
+        {
+
+            var agendasModel = Db.AgendaEvento.Where(x => x.FuncionarioId == id).ToList();
+
+            var agendasViewModel = Mapper.Map<ICollection<AgendaEvento>, ICollection<AgendaViewModel>>(agendasModel);
+
+            return agendasViewModel;
+
+        }
     }
 }

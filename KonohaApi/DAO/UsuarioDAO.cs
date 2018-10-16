@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace KonohaApi.DAO
 {
@@ -46,8 +47,8 @@ namespace KonohaApi.DAO
                 usuarioModel.DataCadastro = DateTime.Now;
                 usuarioModel.Ativo = true;
 
-               // Db.Usuario.Add(usuarioModel);
-                //Db.SaveChanges();
+                 Db.Usuario.Add(usuarioModel);
+                Db.SaveChanges();
 
                 return "OK";
             }
@@ -68,12 +69,14 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var usuario = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf && x.Id != entity.Id) > 1;
-
-                if (usuario)
-                    throw new Exception("Usuario ja cadastrado com mesmo UserName ou CPF.");
-
                 var usuarioModel = Mapper.Map<UsuarioViewModel, Usuario>(entity);
+
+                Db.Usuario.Attach(usuarioModel);
+
+                var usuarioExists = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf && x.Id != entity.Id) > 1;
+
+                if (usuarioExists)
+                    throw new Exception("Usuario ja cadastrado com mesmo UserName ou CPF.");
 
                 Db.Entry(usuarioModel).State = EntityState.Modified;
                 Db.SaveChanges();
@@ -85,9 +88,53 @@ namespace KonohaApi.DAO
             }
         }
 
+        public string AltararFoto(int idUsuario, string pathFoto)
+        {
+            try
+            {
+                var usuario = Db.Usuario.Find(idUsuario);
+
+                if (pathFoto != "")
+                {
+                    string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+
+                    var bits = Convert.FromBase64String(pathFoto);
+
+                    string nomeImagem = Guid.NewGuid().ToString() + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".jpg";
+
+                    string imgPath = Path.Combine(path, nomeImagem);
+
+                    File.WriteAllBytes(imgPath, bits);
+                    var existeFoto = Path.Combine(path, usuario.PathFotoPerfil);
+
+                    if (File.Exists(existeFoto))
+                        File.Delete(existeFoto);
+
+                    usuario.PathFotoPerfil = nomeImagem;
+                }
+                else
+                {
+                    string path = HttpContext.Current.Server.MapPath("~/Imagens/Usuario/");
+                    var existeFoto = Path.Combine(path, usuario.PathFotoPerfil);
+
+                    if (File.Exists(existeFoto))
+                        File.Delete(existeFoto);
+
+                    usuario.PathFotoPerfil = pathFoto;
+                }
+                Db.Entry(usuario).State = EntityState.Modified;
+                Db.SaveChanges();
+                return "OK";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
         public ICollection<UsuarioViewModel> ListaTodos()
         {
-            var usuario = Db.Usuario.Where(x => x.Ativo == true).ToList();
+            var usuario = Db.Usuario.ToList();
 
             var usuarioViewModel = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(usuario);
 
@@ -98,7 +145,7 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var usuarioModel = Db.Usuario.Find(id);
+                var usuarioModel = Db.Usuario.Include("Participante").Single(x => x.Id == id);
 
                 if (usuarioModel == null)
                     throw new Exception("Usuario não encontrado.");
@@ -165,14 +212,14 @@ namespace KonohaApi.DAO
 
         public UsuarioViewModel GetUser(string username)
         {
-            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(Db.Usuario.First(x => x.UserName == username));
+            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(Db.Usuario.FirstOrDefault(x => x.UserName == username));
 
             return usuarioViewModel;
         }
 
-        public UsuarioViewModel BuscaPorCpf(string cpf)
+        public UsuarioViewModel BuscaPorCpf(MudaSenhaCpf Cpf)
         {
-            var usuarioModel = Db.Usuario.FirstOrDefault(x => x.Cpf == cpf);
+            var usuarioModel = Db.Usuario.FirstOrDefault(x => x.Cpf == Cpf.Cpf);
             if (usuarioModel == null)
                 return null;
 
@@ -227,6 +274,7 @@ namespace KonohaApi.DAO
                 ParticipanteEvento alunoEvento = new ParticipanteEvento()
                 {
                     InscricaoPrevia = true,
+                    ConfirmacaoPresenca = false,
                     ParticipanteId = model.ParticipanteId,
                     EventoId = model.EventoId,
                     CodigoValidacao = codigo
@@ -261,6 +309,11 @@ namespace KonohaApi.DAO
             return result;
         }
 
+        public bool VerificarInscricao(InscricaoParticipanteEvento inscricao)
+        {
+            return Db.ParticipanteEvento.Count(x => x.ParticipanteId == inscricao.ParticipanteId && x.EventoId == inscricao.EventoId) > 0;
+        }
+
         public string CancelaInscricaoEvento(InscricaoParticipanteEvento inscricao)
         {
             try
@@ -278,8 +331,8 @@ namespace KonohaApi.DAO
                 if (resultado == null)
                     throw new Exception("Não a inscricao desse participante nesse evento.");
 
-                resultado.InscricaoPrevia = false;
-                Db.Entry(resultado).State = EntityState.Modified;
+
+                Db.ParticipanteEvento.Remove(resultado);
                 Db.SaveChanges();
 
                 evento.NumeroVagas = evento.NumeroVagas + 1;
@@ -288,7 +341,7 @@ namespace KonohaApi.DAO
                 EventoDAO eventoDAO = new EventoDAO();
 
                 eventoDAO.Editar(eventoViewModel);
-
+                Db.SaveChanges();
                 return "OK";
             }
             catch (Exception e)
@@ -306,7 +359,7 @@ namespace KonohaApi.DAO
 
             foreach (var item in resultado)
             {
-                var eventoModel = Db.Evento.Find(item.EventoId);
+                var eventoModel = Db.Evento.Include("AgendaEvento").FirstOrDefault(x => x.Id == item.EventoId);
                 var evento = Mapper.Map<Evento, EventoViewModel>(eventoModel);
                 eventos.Add(evento);
             }
