@@ -87,6 +87,14 @@ namespace KonohaApi.DAO
             return alunoViewModel;
         }
 
+
+        public ParticipanteViewModel BuscaporCodigo(string id)
+        {
+            var alunoViewModel = Mapper.Map<Participante, ParticipanteViewModel>(Db.Participante.Include("Usuario").FirstOrDefault(x => x.CodCarteirinha == id));
+
+            return alunoViewModel;
+        }
+
         public ParticipanteViewModel GetParticipanteLogado(string username)
         {
             var participanteView = Mapper.Map<Participante, ParticipanteViewModel>(Db.Participante.Include("Usuario").FirstOrDefault(x => x.Usuario.UserName == username));
@@ -104,7 +112,7 @@ namespace KonohaApi.DAO
             try
             {
                 var participanteModel = Mapper.Map<ParticipanteViewModel, Participante>(entity);
-              
+
                 Db.Participante.Attach(participanteModel);
 
                 bool alunoExistente = Db.Participante.Count(x => x.Matricula == entity.Matricula) > 1;

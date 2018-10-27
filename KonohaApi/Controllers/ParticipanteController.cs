@@ -52,6 +52,16 @@ namespace KonohaApi.Controllers
             return Ok(aluno);
         }
 
+        
+            [HttpGet]
+        [Route("busca-por-codigo/{id}")]
+        [ResponseType(typeof(ParticipanteViewModel))]
+        public IHttpActionResult BuscaPorCodigo(string id)
+        {
+            var aluno = DAO.BuscaporCodigo(id);
+
+            return Ok(aluno);
+        }
         // PUT: api/Aluno/5
         [HttpPatch]
         [Route("altera/{id:int}")]

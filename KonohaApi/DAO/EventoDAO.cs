@@ -40,10 +40,10 @@ namespace KonohaApi.DAO
                         eventoModel.Cancelado = false;
 
                         Db.Evento.Add(eventoModel);
-                        Db.SaveChanges();
 
                         foreach (var item in entity.Funcionario)
                         {
+                            
                             EventoFuncionario e = new EventoFuncionario
                             {
                                 EventoId = eventoModel.Id,
@@ -52,8 +52,6 @@ namespace KonohaApi.DAO
 
                             Db.EventoFuncionario.Add(e);
                         }
-
-
                         Db.SaveChanges();
                         return "OK";
                     }

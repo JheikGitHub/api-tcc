@@ -9,7 +9,6 @@ namespace KonohaApi.Models
     [Table("EventoFuncionario")]
     public partial class EventoFuncionario
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public int EventoId { get; set; }
