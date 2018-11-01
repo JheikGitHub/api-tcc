@@ -406,5 +406,13 @@ namespace KonohaApi.DAO
             return eventos;
         }
 
+        public bool VerficarNomeEventoExistente(string nomeEvento, int idEvento)
+        {
+            if (idEvento == 0)
+                return Db.Evento.Count(x => x.Nome == nomeEvento) > 0; // Create evento
+            else
+                return Db.Evento.Count(x => x.Nome == nomeEvento && x.Id != idEvento) > 0; // Edit evento
+        }
+
     }
 }
