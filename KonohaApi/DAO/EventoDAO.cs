@@ -406,12 +406,12 @@ namespace KonohaApi.DAO
             return eventos;
         }
 
-        public bool VerficarNomeEventoExistente(string nomeEvento, int idEvento)
+        public bool VerficarNomeEventoExistente(VerificaNomeEvento evento)
         {
-            if (idEvento == 0)
-                return Db.Evento.Count(x => x.Nome == nomeEvento) > 0; // Create evento
+            if (evento.IdEvento == 0)
+                return Db.Evento.Count(x => x.Nome == evento.NomeEvento) > 0; // Create evento
             else
-                return Db.Evento.Count(x => x.Nome == nomeEvento && x.Id != idEvento) > 0; // Edit evento
+                return Db.Evento.Count(x => x.Nome == evento.NomeEvento && x.Id != evento.IdEvento) > 0; // Edit evento
         }
 
     }
