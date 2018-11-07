@@ -174,7 +174,7 @@ namespace KonohaApi.DAO
         public ICollection<AgendaViewModel> ListaTodos()
         {
 
-            var agendaViewModel = Mapper.Map<ICollection<AgendaEvento>, ICollection<AgendaViewModel>>(Db.AgendaEvento.OrderByDescending(x => x.DateEncerramento).ToList());
+            var agendaViewModel = Mapper.Map<ICollection<AgendaEvento>, ICollection<AgendaViewModel>>(Db.AgendaEvento.ToList());
 
             return agendaViewModel;
         }

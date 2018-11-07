@@ -43,7 +43,7 @@ namespace KonohaApi.DAO
 
                         foreach (var item in entity.Funcionario)
                         {
-                            
+
                             EventoFuncionario e = new EventoFuncionario
                             {
                                 EventoId = eventoModel.Id,
@@ -297,6 +297,12 @@ namespace KonohaApi.DAO
                 if (agenda == null)
                     throw new Exception("Agenda não encontrada.");
 
+                var IsConfimacao = Db.ParticipanteEvento.Count(x => x.ParticipanteId == confimacao.UsuarioId
+               && x.EventoId == confimacao.EventoId && x.ConfirmacaoPresenca == true) > 0;
+
+                if (IsConfimacao)
+                    throw new Exception("Presença já confimada no evento.");
+
                 var ExisteParticpanteInscrito = Db.ParticipanteEvento.Count(x => x.ParticipanteId == confimacao.UsuarioId
                 && x.EventoId == confimacao.EventoId && x.InscricaoPrevia == true) > 0;
 
@@ -404,14 +410,6 @@ namespace KonohaApi.DAO
             }
             var eventos = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
             return eventos;
-        }
-
-        public bool VerficarNomeEventoExistente(VerificaNomeEvento evento)
-        {
-            if (evento.IdEvento == 0)
-                return Db.Evento.Count(x => x.Nome == evento.NomeEvento) > 0; // Create evento
-            else
-                return Db.Evento.Count(x => x.Nome == evento.NomeEvento && x.Id != evento.IdEvento) > 0; // Edit evento
         }
 
     }

@@ -229,13 +229,6 @@ namespace KonohaApi.Controllers
             return Ok(eventos);
         }
 
-        [HttpPost]
-        [Route("verificar-nome-evento")]
-        public bool VerificarNomeEvento(VerificaNomeEvento evento)
-        {
-            return DAO.VerficarNomeEventoExistente(evento);
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

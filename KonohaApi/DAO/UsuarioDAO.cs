@@ -21,11 +21,11 @@ namespace KonohaApi.DAO
 
         public string Adicionar(UsuarioViewModel entity)
         {
-            bool usuarioExistente = Db.Usuario.Count(x => x.UserName == entity.UserName && x.Cpf == entity.Cpf) > 0;
+            bool usuarioExistente = Db.Usuario.Count(x => x.UserName == entity.UserName || x.Cpf == entity.Cpf) > 0;
             try
             {
                 if (usuarioExistente)
-                    throw new Exception("Usuario ja cadastrado");
+                    throw new Exception("Usuario ja cadastrado com mesmo e-mail ou CPF");
 
                 var usuarioModel = Mapper.Map<UsuarioViewModel, Usuario>(entity);
 
