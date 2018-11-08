@@ -55,6 +55,8 @@ namespace KonohaApi.ViewModels
         [Display(Name = "Agenda de eventos")]
         public int AgendaEventoId { get; set; }
 
+        public bool Cancelado { get; set; }
+
         public AgendaViewModel AgendaEvento { get; set; }
 
         public ICollection<FuncionarioViewModel> Funcionario { get; set; }
