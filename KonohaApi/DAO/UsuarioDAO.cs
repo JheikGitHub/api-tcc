@@ -12,6 +12,8 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace KonohaApi.DAO
 {
@@ -269,7 +271,7 @@ namespace KonohaApi.DAO
                         throw new Exception("Não e possivel realizar a inscrição em eventos que occoram na mesma hora.");
                 }
 
-                string codigo = AlfanumericoAleatorio(3) + "-" + new Random().Next(00000, 99999).ToString() + "-" + AlfanumericoAleatorio(3);
+                string codigo = CodigoUnico();
 
                 ParticipanteEvento alunoEvento = new ParticipanteEvento()
                 {
@@ -301,12 +303,27 @@ namespace KonohaApi.DAO
         public string AlfanumericoAleatorio(int tamanho)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var random = new Random();
-            var result = new string(
-                Enumerable.Repeat(chars, tamanho)
-                          .Select(s => s[random.Next(s.Length)])
-                          .ToArray());
-            return result;
+            byte[] data = new byte[tamanho];
+            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            {
+                crypto.GetBytes(data);
+            }
+            StringBuilder result = new StringBuilder(tamanho);
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            return result.ToString();
+        }
+
+        private string CodigoUnico()
+        {
+           string codigo = AlfanumericoAleatorio(3) + "-" + new Random().Next(00000, 99999).ToString() + "-" + AlfanumericoAleatorio(3);
+
+            if (Db.ParticipanteEvento.Count(x => x.CodigoValidacao == codigo) > 1)
+                CodigoUnico();
+
+           return codigo;
         }
 
         public bool VerificarInscricao(InscricaoParticipanteEvento inscricao)
