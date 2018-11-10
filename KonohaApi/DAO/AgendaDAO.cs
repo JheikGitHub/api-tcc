@@ -118,7 +118,7 @@ namespace KonohaApi.DAO
 
             if (agenda != null)
             {
-                var ev = Db.Evento.Where(x => x.AgendaEventoId == agenda.Id).ToList();
+                var ev = Db.Evento.Where(x => x.AgendaEventoId == agenda.Id && x.Cancelado == false).ToList();
                 eventos = Mapper.Map<ICollection<Evento>, ICollection<EventoViewModel>>(ev);
 
                 return eventos;
