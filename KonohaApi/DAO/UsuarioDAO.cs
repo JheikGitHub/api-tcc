@@ -320,7 +320,7 @@ namespace KonohaApi.DAO
         {
            string codigo = AlfanumericoAleatorio(3) + "-" + new Random().Next(00000, 99999).ToString() + "-" + AlfanumericoAleatorio(3);
 
-            if (Db.ParticipanteEvento.Count(x => x.CodigoValidacao == codigo) > 1)
+            if (Db.ParticipanteEvento.Count(x => x.CodigoValidacao == codigo) > 0)
                 CodigoUnico();
 
            return codigo;
