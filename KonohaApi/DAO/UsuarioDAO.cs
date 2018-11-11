@@ -435,7 +435,7 @@ namespace KonohaApi.DAO
             var fontCertificado = new XFont("Arial", 30, XFontStyle.Bold);
 
 
-            graphics.DrawImage(XImage.FromFile(@"C:\KonohaApi\KonohaApi\certificado-backgroung.jpg")
+            graphics.DrawImage(XImage.FromFile(@"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\certificado-backgroung.jpg")
                 , 0, 0, page.Width + 60, page.Height);
 
             textFormatter.DrawString("Certificado Konoha ", fontCertificado, XBrushes.Black,
@@ -450,11 +450,23 @@ namespace KonohaApi.DAO
 
             textFormatter.DrawString("Código de validação:", new XFont("Arial", 10, XFontStyle.Bold), XBrushes.Black, new XRect(397, 370, page.Width - 60, page.Height - 60));
             textFormatter.DrawString(codigo.CodigoValidacao, new XFont("Arial", 10, XFontStyle.Regular), XBrushes.Black, new XRect(500, 370, page.Width - 60, page.Height - 60));
-            string caminho = @"C:\KonohaApi\KonohaApi\Certificados\Certificado" + codigo.CodigoValidacao + ".pdf";
+            string caminho = @"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\Certificados\Certificado" + codigo.CodigoValidacao + ".pdf";
             doc.Save(caminho);
 
             return caminho;
 
+        }
+
+        public ParticipanteEventoViewModel VerficarCodigoCertificado(string codigo)
+        {
+            var inscrição = Db.ParticipanteEvento.FirstOrDefault(x => x.CodigoValidacao == codigo && x.ConfirmacaoPresenca == true);
+
+            if (inscrição == null)
+                return null;
+
+            var inscricaoViewModel = Mapper.Map<ParticipanteEvento, ParticipanteEventoViewModel>(inscrição);
+
+            return inscricaoViewModel;
         }
 
         public void Dispose()

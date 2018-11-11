@@ -196,6 +196,7 @@
     <Compile Include="ViewModels\ModelosDeAjuda\MotivoCancelamentoEvento.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\SuporteUsuario.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\VerificaNomeEvento.cs" />
+    <Compile Include="ViewModels\ParticipanteEventoViewModel.cs" />
     <Compile Include="ViewModels\ParticipanteViewModel.cs" />
     <Compile Include="ViewModels\EventoViewModel.cs" />
     <Compile Include="ViewModels\FuncionarioViewModel.cs" />

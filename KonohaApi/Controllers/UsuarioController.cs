@@ -317,6 +317,18 @@ namespace KonohaApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("validar-certificado/{codigo}")]
+        public IHttpActionResult ValidarCertificado(string codigo)
+        {
+            var resultado = DAO.VerficarCodigoCertificado(codigo);
+
+            if (resultado == null)
+                return NotFound();
+            
+            return Ok(resultado);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
