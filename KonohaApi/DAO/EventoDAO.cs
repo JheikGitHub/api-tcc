@@ -404,7 +404,7 @@ namespace KonohaApi.DAO
 
             foreach (var item in res)
             {
-                lista.Add(Db.Usuario.Find(item.EventoId));
+                lista.Add(Db.Usuario.Find(item.FuncionarioId));
             }
             var eventos = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
             return eventos;
