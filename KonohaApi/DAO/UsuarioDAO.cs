@@ -147,12 +147,22 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var usuarioModel = Db.Usuario.Include("Participante").Single(x => x.Id == id);
+                var usuarioModel = Db.Usuario.Find(id);
 
                 if (usuarioModel == null)
                     throw new Exception("Usuario não encontrado.");
 
-                Db.Usuario.Remove(usuarioModel);
+                if(usuarioModel.Perfil.ToLower() == "participante" || usuarioModel.Perfil.ToLower() == "aluno")
+                {
+                    var participante = Db.Usuario.Include("Participante").Single(x => x.Id == id);
+                    Db.Usuario.Remove(participante);
+                }
+                else
+                {
+                    var funcionario = Db.Usuario.Include("Funcionario").Single(x => x.Id == id);
+                    Db.Usuario.Remove(funcionario);
+                }
+
                 Db.SaveChanges();
                 return "OK";
             }
