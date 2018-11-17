@@ -135,14 +135,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Konoha.mdf" />
-    <Content Include="App_Data\KonohaApi.mdf" />
-    <Content Include="App_Data\KonohaApi_log.ldf">
-      <DependentUpon>KonohaApi.mdf</DependentUpon>
-    </Content>
-    <Content Include="App_Data\Konoha_log.ldf">
-      <DependentUpon>Konoha.mdf</DependentUpon>
-    </Content>
     <Content Include="certificado-backgroung.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -203,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -211,6 +204,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="App_Start\" />
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
