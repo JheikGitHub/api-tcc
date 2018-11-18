@@ -1,5 +1,7 @@
 ﻿using KonohaApi.DAO;
 using KonohaApi.ViewModels;
+using KonohaApi.ViewModels.ModelosDeAjuda;
+using System;
 using System.Net;
 using System.Web.Http;
 
@@ -96,6 +98,16 @@ namespace KonohaApi.Controllers
             var comentarios = DAO.BuscaTodoComentarioPorTopico(id);
             return Ok(comentarios);
         }
+
+
+        [HttpPost]
+        [Route("busca-todos-comentarios-por-nome-topico-discussao")]
+        public IHttpActionResult BuscaTodosComentarioTopicoDisucssao(BuscaComentariosTopicoDiscussao topicoDiscussao)
+        {
+            var comentarios = DAO.BuscaTodosComentariosTopicoPorNome(topicoDiscussao);
+            return Ok(comentarios);
+        }
+
 
         [HttpGet]
         [Route("busca-comentarios-filhos")]

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace KonohaApi.ViewModels
 {
@@ -12,13 +13,16 @@ namespace KonohaApi.ViewModels
 
         [Required]
         [Display(Name = "Id topico discuçao")]
-        public int TopicoIDiscucaoId { get; set; }
+        public int TopicoId { get; set; }
 
-       
+        public DateTime DataHoraPublicacao { get; set; }
+
         [Display(Name = "Id usuario")]
         public int UsuarioId { get; set; }
         
         [Display(Name = "Comentario filho")]
-        public int? ParentId { get; set; }
+        public int? ParentId { get; set; } 
+
+        public UsuarioViewModel Usuario { get; set; }
     }
 }

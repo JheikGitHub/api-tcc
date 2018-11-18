@@ -191,6 +191,7 @@
     <Compile Include="ViewModels\ComentarioViewModel.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\AcessUser.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\AssociacaoEventoFuncionario.cs" />
+    <Compile Include="ViewModels\ModelosDeAjuda\BuscaComentariosTopicoDiscussao.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\InscricaoParticipanteEvento.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\MandaEmail.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\MotivoCancelamentoEvento.cs" />

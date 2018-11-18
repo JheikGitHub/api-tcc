@@ -21,6 +21,8 @@ namespace KonohaApi.Models
         [StringLength(500)]
         public string Texto { get; set; }
 
+        public DateTime DataHoraPublicacao { get; set; }
+
         public int TopicoId { get; set; }
 
         public int UsuarioId { get; set; }
