@@ -67,6 +67,13 @@ namespace KonohaApi.Controllers
             return Ok(topicos);
         }
 
+        [HttpGet]
+        [Route("busca-topico-por-id/{id:int}")]
+        public IHttpActionResult BuscaTopicoPorId(int id)
+        {
+            var topicos = DAO.BuscaTopicoPorId(id);
+            return Ok(topicos);
+        }
 
         [HttpGet]
         [Route("busca-topicos-por-nome/{id}")]
@@ -98,16 +105,6 @@ namespace KonohaApi.Controllers
             var comentarios = DAO.BuscaTodoComentarioPorTopico(id);
             return Ok(comentarios);
         }
-
-
-        [HttpPost]
-        [Route("busca-todos-comentarios-por-nome-topico-discussao")]
-        public IHttpActionResult BuscaTodosComentarioTopicoDisucssao(BuscaComentariosTopicoDiscussao topicoDiscussao)
-        {
-            var comentarios = DAO.BuscaTodosComentariosTopicoPorNome(topicoDiscussao);
-            return Ok(comentarios);
-        }
-
 
         [HttpGet]
         [Route("busca-comentarios-filhos")]

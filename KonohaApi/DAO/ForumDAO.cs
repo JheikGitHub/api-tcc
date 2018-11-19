@@ -13,6 +13,17 @@ namespace KonohaApi.DAO
     {
         #region Topico
 
+        public TopicoViewModel BuscaTopicoPorId(int id)
+        {
+            var topico = Db.TopicoDiscucao.FirstOrDefault(x => x.Id == id);
+            if (topico == null)
+                return null;
+
+            var topicoViewModel = Mapper.Map<TopicoDiscucao, TopicoViewModel>(topico);
+
+            return topicoViewModel;
+        }
+
         public TopicoViewModel BuscaPorNome(string nome)
         {
             var topico = Db.TopicoDiscucao.FirstOrDefault(x => x.Nome == nome);
@@ -123,6 +134,8 @@ namespace KonohaApi.DAO
 
                 if (!topico)
                     throw new Exception("Evento não encotrado");
+
+                comentarioViewModel.DataHoraPublicacao = DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
                 var comentario = Mapper.Map<ComentarioViewModel, Comentario>(comentarioViewModel);
 
                 Db.Comentario.Add(comentario);
@@ -173,13 +186,7 @@ namespace KonohaApi.DAO
 
         public ICollection<ComentarioViewModel> BuscaTodoComentarioPorTopico(int TopicoId)
         {
-            var comentarios = Mapper.Map<ICollection<Comentario>, ICollection<ComentarioViewModel>>(Db.Comentario.Where(x => x.TopicoId == TopicoId).ToList());
-            return comentarios;
-        }
-
-        public ICollection<ComentarioViewModel> BuscaTodosComentariosTopicoPorNome(BuscaComentariosTopicoDiscussao topico)
-        {
-            var comentarios = Mapper.Map<ICollection<Comentario>, ICollection<ComentarioViewModel>>(Db.Comentario.Include(u  => u.Usuario).Where(x => x.TopicoDiscucao.Nome == topico.NomeTopicoDiscussao).ToList());
+            var comentarios = Mapper.Map<ICollection<Comentario>, ICollection<ComentarioViewModel>>(Db.Comentario.Include(u => u.Usuario).Where(x => x.TopicoId == TopicoId).ToList());
             return comentarios;
         }
 
