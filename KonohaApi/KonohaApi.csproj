@@ -143,6 +143,7 @@
     <Content Include="App_Data\Konoha_log.ldf">
       <DependentUpon>Konoha.mdf</DependentUpon>
     </Content>
+    <Content Include="bg.png" />
     <Content Include="certificado-backgroung.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">

@@ -445,16 +445,17 @@ namespace KonohaApi.DAO
             var fontCertificado = new XFont("Arial", 30, XFontStyle.Bold);
 
 
-            graphics.DrawImage(XImage.FromFile(@"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\certificado-backgroung.jpg")
+            graphics.DrawImage(XImage.FromFile(@"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\bg.png")
                 , 0, 0, page.Width + 60, page.Height);
+
 
             textFormatter.DrawString("Certificado Konoha ", fontCertificado, XBrushes.Black,
                 new XRect(160, 110, page.Width, page.Height));
 
             textFormatter.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Justify;
-            textFormatter.DrawString($"Certificamos para os devidos fins que {usuario.Nome}, CPF n.º {usuario.Cpf} participou do (a) Evento " +
-                $"{evento.Nome} ministrado(a) pelo(a) {evento.Apresentador}, durante a {agenda.Nome},no período de {agenda.DataInicio.Day} a " +
-                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria}h"
+            textFormatter.DrawString($"Certificamos para os devidos fins que {usuario.Nome}, CPF n.º {usuario.Cpf} participou do (a) {evento.TipoEvento} " +
+                $"'{evento.Nome}' ministrado(a) pelo(a) {evento.Apresentador}, durante a {agenda.Nome}, no período de {agenda.DataInicio.Day} a " +
+                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria} horas."
                 , new XFont("Arial", 14, XFontStyle.Regular)
              , XBrushes.Black, new XRect(30, 180, page.Width - 60, page.Height - 60));
 
