@@ -480,6 +480,46 @@ namespace KonohaApi.DAO
             return inscricaoViewModel;
         }
 
+        public ConfirmacaoPresencaValidacao BuscarUsuarioParaConfirmacaoPresenca(DadosConfirmacaoPresencaWeb dados)
+        {
+            ConfirmacaoPresencaValidacao result = new ConfirmacaoPresencaValidacao();
+
+            var user = Db.Usuario.FirstOrDefault(x => x.Cpf == dados.CpfUsuario);
+            var evento = Db.Evento.FirstOrDefault(x => x.Id == dados.IdEvento);
+
+            if(user == null)
+            {
+                return null;
+            }
+
+            var presencasConfirmadasParticipante = Db.ParticipanteEvento.Where(x => x.ConfirmacaoPresenca == true && x.ParticipanteId == user.Id).ToList();
+
+            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(user);
+
+            result.Usuario = usuarioViewModel;
+            result.StatusConfirmacao = "Ok";
+
+            if(Db.ParticipanteEvento.Count(x => x.ParticipanteId == user.Id && x.EventoId == dados.IdEvento && x.ConfirmacaoPresenca == true) > 0)
+            {
+                result.StatusConfirmacao = "FE6";//Participante já teve sua presença confirmada neste evento
+            }
+            else
+            if(presencasConfirmadasParticipante.Count() > 0)
+            {
+                foreach (var item in presencasConfirmadasParticipante)
+                {
+                    if((evento.DataInicio >= item.Evento.DataInicio && evento.DataInicio <= item.Evento.DataEncerramento) ||
+                       (evento.DataEncerramento >= item.Evento.DataInicio && evento.DataEncerramento <= item.Evento.DataEncerramento))
+                    {
+                        result.StatusConfirmacao = "FE5"; //Participante já teve presença confirmada em outro que ocorreu no mesmo periodo
+                    }
+                }
+            }
+
+            return result;
+
+        }
+
         public void Dispose()
         {
             Db.Dispose();

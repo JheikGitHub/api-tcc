@@ -329,6 +329,18 @@ namespace KonohaApi.Controllers
             return Ok(resultado);
         }
 
+        [HttpPost]
+        [Route("buscar-por-cpf-confirmar-presenca")]
+        public IHttpActionResult BuscarUsuarioParaConfirmacaoPresenca(DadosConfirmacaoPresencaWeb dados)
+        {
+            var dadosConfirmacaoPresenca = DAO.BuscarUsuarioParaConfirmacaoPresenca(dados);
+
+            if (dadosConfirmacaoPresenca == null)
+                return NotFound();
+
+            return Ok(dadosConfirmacaoPresenca);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
