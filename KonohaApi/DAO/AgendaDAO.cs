@@ -118,7 +118,7 @@ namespace KonohaApi.DAO
 
             if (agenda != null)
             {
-                var ev = Db.Evento.Where(x => x.AgendaEventoId == agenda.Id).ToList();
+                var ev = Db.Evento.Where(x => x.AgendaEventoId == agenda.Id && x.Cancelado == false).ToList();
                 eventos = Mapper.Map<ICollection<Evento>, ICollection<EventoViewModel>>(ev);
 
                 return eventos;
@@ -174,7 +174,7 @@ namespace KonohaApi.DAO
         public ICollection<AgendaViewModel> ListaTodos()
         {
 
-            var agendaViewModel = Mapper.Map<ICollection<AgendaEvento>, ICollection<AgendaViewModel>>(Db.AgendaEvento.ToList());
+            var agendaViewModel = Mapper.Map<ICollection<AgendaEvento>, ICollection<AgendaViewModel>>(Db.AgendaEvento.OrderByDescending(x => x.DateEncerramento).ToList());
 
             return agendaViewModel;
         }

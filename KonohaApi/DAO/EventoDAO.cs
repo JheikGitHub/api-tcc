@@ -196,34 +196,32 @@ namespace KonohaApi.DAO
                     throw new Exception("Evento não encontrado.");
 
                 eventoSelecionado.Cancelado = true;
-                var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(eventoSelecionado);
+          
+                Db.Evento.Attach(eventoSelecionado);
+                Db.Entry(eventoSelecionado).State = EntityState.Modified;
+                Db.SaveChanges();
 
-                string resultado = Editar(eventoViewModel);
 
-                if (resultado.Equals("OK"))
+                var eventosParticipante = Db.ParticipanteEvento.Where(x => x.EventoId == eventoSelecionado.Id).ToList();
+
+                foreach (var item in eventosParticipante)
                 {
-                    var eventosParticipante = Db.ParticipanteEvento.Where(x => x.EventoId == eventoSelecionado.Id).ToList();
+                    var usuario = Db.Usuario.Find(item.ParticipanteId);
 
-                    foreach (var item in eventosParticipante)
+                    GmailEmailService gmail = new GmailEmailService();
+                    EmailMessage msg = new EmailMessage
                     {
-                        var usuario = Db.Usuario.Find(item.ParticipanteId);
+                        Body = $"<html><head> </head> <body>  <form> <h1>Aviso</h1><h3>Olá {usuario.Nome}</h3><p>{motivo.Descricao}</p> </form></body> </html>",
+                        IsHtml = true,
+                        Subject = "Cancelamento de Evento",
+                        ToEmail = usuario.Email
+                    };
 
-                        GmailEmailService gmail = new GmailEmailService();
-                        EmailMessage msg = new EmailMessage
-                        {
-                            Body = $"<html><head> </head> <body>  <form> <h1>Aviso</h1><h3>Olá {usuario.Nome}</h3><p>{motivo.Descricao}</p> </form></body> </html>",
-                            IsHtml = true,
-                            Subject = "Cancelamento de Evento",
-                            ToEmail = usuario.Email
-                        };
-
-                        result = gmail.SendEmailMessage(msg);
-                    }
+                    result = gmail.SendEmailMessage(msg);
                 }
-                if (result)
-                    return "OK";
 
-                throw new Exception("Não foi possivel cancelar o evento.");
+                return "OK";
+
             }
             catch (Exception e)
             {
@@ -406,10 +404,18 @@ namespace KonohaApi.DAO
 
             foreach (var item in res)
             {
-                lista.Add(Db.Usuario.Find(item.EventoId));
+                lista.Add(Db.Usuario.Find(item.FuncionarioId));
             }
             var eventos = Mapper.Map<ICollection<Usuario>, ICollection<UsuarioViewModel>>(lista);
             return eventos;
+        }
+
+        public bool VerficarNomeEventoExistente(VerificaNomeEvento evento)
+        {
+            if (evento.IdEvento == 0)
+                return Db.Evento.Count(x => x.Nome == evento.NomeEvento.TrimStart().TrimEnd() && x.AgendaEventoId == evento.IdAgenda) > 0; // Create evento
+            else
+                return Db.Evento.Count(x => x.Nome == evento.NomeEvento && x.Id != evento.IdEvento && x.AgendaEventoId == evento.IdAgenda) > 0; // Edit evento
         }
 
     }

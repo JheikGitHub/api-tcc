@@ -12,6 +12,8 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace KonohaApi.DAO
 {
@@ -145,12 +147,22 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var usuarioModel = Db.Usuario.Include("Participante").Single(x => x.Id == id);
+                var usuarioModel = Db.Usuario.Find(id);
 
                 if (usuarioModel == null)
                     throw new Exception("Usuario não encontrado.");
 
-                Db.Usuario.Remove(usuarioModel);
+                if(usuarioModel.Perfil.ToLower() == "participante" || usuarioModel.Perfil.ToLower() == "aluno")
+                {
+                    var participante = Db.Usuario.Include("Participante").Single(x => x.Id == id);
+                    Db.Usuario.Remove(participante);
+                }
+                else
+                {
+                    var funcionario = Db.Usuario.Include("Funcionario").Single(x => x.Id == id);
+                    Db.Usuario.Remove(funcionario);
+                }
+
                 Db.SaveChanges();
                 return "OK";
             }
@@ -269,7 +281,7 @@ namespace KonohaApi.DAO
                         throw new Exception("Não e possivel realizar a inscrição em eventos que occoram na mesma hora.");
                 }
 
-                string codigo = AlfanumericoAleatorio(3) + "-" + new Random().Next(00000, 99999).ToString() + "-" + AlfanumericoAleatorio(3);
+                string codigo = CodigoUnico();
 
                 ParticipanteEvento alunoEvento = new ParticipanteEvento()
                 {
@@ -301,12 +313,27 @@ namespace KonohaApi.DAO
         public string AlfanumericoAleatorio(int tamanho)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            var random = new Random();
-            var result = new string(
-                Enumerable.Repeat(chars, tamanho)
-                          .Select(s => s[random.Next(s.Length)])
-                          .ToArray());
-            return result;
+            byte[] data = new byte[tamanho];
+            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            {
+                crypto.GetBytes(data);
+            }
+            StringBuilder result = new StringBuilder(tamanho);
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            return result.ToString();
+        }
+
+        private string CodigoUnico()
+        {
+           string codigo = AlfanumericoAleatorio(3) + "-" + new Random().Next(00000, 99999).ToString() + "-" + AlfanumericoAleatorio(3);
+
+            if (Db.ParticipanteEvento.Count(x => x.CodigoValidacao == codigo) > 0)
+                CodigoUnico();
+
+           return codigo;
         }
 
         public bool VerificarInscricao(InscricaoParticipanteEvento inscricao)
@@ -418,25 +445,78 @@ namespace KonohaApi.DAO
             var fontCertificado = new XFont("Arial", 30, XFontStyle.Bold);
 
 
-            graphics.DrawImage(XImage.FromFile(@"C:\KonohaApi\KonohaApi\certificado-backgroung.jpg")
+            graphics.DrawImage(XImage.FromFile(@"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\bg.png")
                 , 0, 0, page.Width + 60, page.Height);
+
 
             textFormatter.DrawString("Certificado Konoha ", fontCertificado, XBrushes.Black,
                 new XRect(160, 110, page.Width, page.Height));
 
             textFormatter.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Justify;
-            textFormatter.DrawString($"Certificamos para os devidos fins que {usuario.Nome}, CPF n.º {usuario.Cpf} participou do (a) Evento " +
-                $"{evento.Nome} ministrado(a) pelo(a) {evento.Apresentador}, durante a {agenda.Nome},no período de {agenda.DataInicio.Day} a " +
-                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria}h"
+            textFormatter.DrawString($"Certificamos para os devidos fins que {usuario.Nome}, CPF n.º {usuario.Cpf} participou do (a) {evento.TipoEvento} " +
+                $"'{evento.Nome}' ministrado(a) pelo(a) {evento.Apresentador}, durante a {agenda.Nome}, no período de {agenda.DataInicio.Day} a " +
+                $"{agenda.DateEncerramento.Day} de {agenda.DataInicio.ToString("MMMM")} de {agenda.DataInicio.Year} com carga horária de {evento.CargaHoraria} horas."
                 , new XFont("Arial", 14, XFontStyle.Regular)
              , XBrushes.Black, new XRect(30, 180, page.Width - 60, page.Height - 60));
 
             textFormatter.DrawString("Código de validação:", new XFont("Arial", 10, XFontStyle.Bold), XBrushes.Black, new XRect(397, 370, page.Width - 60, page.Height - 60));
             textFormatter.DrawString(codigo.CodigoValidacao, new XFont("Arial", 10, XFontStyle.Regular), XBrushes.Black, new XRect(500, 370, page.Width - 60, page.Height - 60));
-            string caminho = @"C:\KonohaApi\KonohaApi\Certificados\Certificado" + codigo.CodigoValidacao + ".pdf";
+            string caminho = @"C:\Users\Markim\Documents\KonohaAPI\KonohaApi\Certificados\Certificado" + codigo.CodigoValidacao + ".pdf";
             doc.Save(caminho);
 
             return caminho;
+
+        }
+
+        public ParticipanteEventoViewModel VerficarCodigoCertificado(string codigo)
+        {
+            var inscrição = Db.ParticipanteEvento.FirstOrDefault(x => x.CodigoValidacao == codigo && x.ConfirmacaoPresenca == true);
+
+            if (inscrição == null)
+                return null;
+
+            var inscricaoViewModel = Mapper.Map<ParticipanteEvento, ParticipanteEventoViewModel>(inscrição);
+
+            return inscricaoViewModel;
+        }
+
+        public ConfirmacaoPresencaValidacao BuscarUsuarioParaConfirmacaoPresenca(DadosConfirmacaoPresencaWeb dados)
+        {
+            ConfirmacaoPresencaValidacao result = new ConfirmacaoPresencaValidacao();
+
+            var user = Db.Usuario.FirstOrDefault(x => x.Cpf == dados.CpfUsuario);
+            var evento = Db.Evento.FirstOrDefault(x => x.Id == dados.IdEvento);
+
+            if(user == null)
+            {
+                return null;
+            }
+
+            var presencasConfirmadasParticipante = Db.ParticipanteEvento.Where(x => x.ConfirmacaoPresenca == true && x.ParticipanteId == user.Id).ToList();
+
+            var usuarioViewModel = Mapper.Map<Usuario, UsuarioViewModel>(user);
+
+            result.Usuario = usuarioViewModel;
+            result.StatusConfirmacao = "Ok";
+
+            if(Db.ParticipanteEvento.Count(x => x.ParticipanteId == user.Id && x.EventoId == dados.IdEvento && x.ConfirmacaoPresenca == true) > 0)
+            {
+                result.StatusConfirmacao = "FE6";//Participante já teve sua presença confirmada neste evento
+            }
+            else
+            if(presencasConfirmadasParticipante.Count() > 0)
+            {
+                foreach (var item in presencasConfirmadasParticipante)
+                {
+                    if((evento.DataInicio >= item.Evento.DataInicio && evento.DataInicio <= item.Evento.DataEncerramento) ||
+                       (evento.DataEncerramento >= item.Evento.DataInicio && evento.DataEncerramento <= item.Evento.DataEncerramento))
+                    {
+                        result.StatusConfirmacao = "FE5"; //Participante já teve presença confirmada em outro que ocorreu no mesmo periodo
+                    }
+                }
+            }
+
+            return result;
 
         }
 

@@ -1,5 +1,7 @@
 ﻿using KonohaApi.DAO;
 using KonohaApi.ViewModels;
+using KonohaApi.ViewModels.ModelosDeAjuda;
+using System;
 using System.Net;
 using System.Web.Http;
 
@@ -65,6 +67,13 @@ namespace KonohaApi.Controllers
             return Ok(topicos);
         }
 
+        [HttpGet]
+        [Route("busca-topico-por-id/{id:int}")]
+        public IHttpActionResult BuscaTopicoPorId(int id)
+        {
+            var topicos = DAO.BuscaTopicoPorId(id);
+            return Ok(topicos);
+        }
 
         [HttpGet]
         [Route("busca-topicos-por-nome/{id}")]

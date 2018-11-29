@@ -18,8 +18,7 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_DbContextTypeFullName>KonohaApi.Models.DataContext</WebStackScaffolding_DbContextTypeFullName>
-    <NameOfLastUsedPublishProfile>CustomProfile</NameOfLastUsedPublishProfile>
-    <ActiveDebugTarget />
+    <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
@@ -31,7 +30,7 @@
           <AspNetDebugging>True</AspNetDebugging>
           <SilverlightDebugging>False</SilverlightDebugging>
           <NativeDebugging>False</NativeDebugging>
-          <SQLDebugging>True</SQLDebugging>
+          <SQLDebugging>False</SQLDebugging>
           <ExternalProgram>
           </ExternalProgram>
           <StartExternalURL>

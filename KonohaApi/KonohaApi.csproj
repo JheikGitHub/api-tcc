@@ -135,6 +135,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Konoha.mdf" />
+    <Content Include="App_Data\KonohaApi.mdf" />
+    <Content Include="App_Data\KonohaApi_log.ldf">
+      <DependentUpon>KonohaApi.mdf</DependentUpon>
+    </Content>
+    <Content Include="App_Data\Konoha_log.ldf">
+      <DependentUpon>Konoha.mdf</DependentUpon>
+    </Content>
+    <Content Include="bg.png" />
     <Content Include="certificado-backgroung.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -183,10 +192,14 @@
     <Compile Include="ViewModels\ComentarioViewModel.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\AcessUser.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\AssociacaoEventoFuncionario.cs" />
+    <Compile Include="ViewModels\ModelosDeAjuda\ConfirmacaoPresencaValidacao.cs" />
+    <Compile Include="ViewModels\ModelosDeAjuda\DadosConfirmacaoPresencaWeb.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\InscricaoParticipanteEvento.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\MandaEmail.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\MotivoCancelamentoEvento.cs" />
     <Compile Include="ViewModels\ModelosDeAjuda\SuporteUsuario.cs" />
+    <Compile Include="ViewModels\ModelosDeAjuda\VerificaNomeEvento.cs" />
+    <Compile Include="ViewModels\ParticipanteEventoViewModel.cs" />
     <Compile Include="ViewModels\ParticipanteViewModel.cs" />
     <Compile Include="ViewModels\EventoViewModel.cs" />
     <Compile Include="ViewModels\FuncionarioViewModel.cs" />
@@ -195,7 +208,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -204,7 +216,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="App_Start\" />
     <Folder Include="Certificados\" />
     <Folder Include="Imagens\Agenda\" />
