@@ -21,7 +21,6 @@ namespace KonohaApi
             app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
             app.UseWebApi(config);
 
-
         }
         public static void Register(HttpConfiguration config)
         {
