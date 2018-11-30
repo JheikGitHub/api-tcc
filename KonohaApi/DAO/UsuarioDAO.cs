@@ -293,9 +293,7 @@ namespace KonohaApi.DAO
                 };
 
                 evento.NumeroVagas = evento.NumeroVagas - 1;
-                var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(evento);
-                EventoDAO eventoDAO = new EventoDAO();
-                eventoDAO.Editar(eventoViewModel);
+                
 
                 Db.ParticipanteEvento.Add(alunoEvento);
                 Db.SaveChanges();
@@ -363,11 +361,7 @@ namespace KonohaApi.DAO
                 Db.SaveChanges();
 
                 evento.NumeroVagas = evento.NumeroVagas + 1;
-                var eventoViewModel = Mapper.Map<Evento, EventoViewModel>(evento);
 
-                EventoDAO eventoDAO = new EventoDAO();
-
-                eventoDAO.Editar(eventoViewModel);
                 Db.SaveChanges();
                 return "OK";
             }

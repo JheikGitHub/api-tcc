@@ -87,7 +87,6 @@ namespace KonohaApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         [Route("adiciona-participante")]
         [ResponseType(typeof(Participante))]
         public IHttpActionResult SalvarParticipante(ParticipanteViewModel aluno)
@@ -97,7 +96,7 @@ namespace KonohaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            string resultado = DAO.AdicionarParticipante(User.Identity.Name, aluno);
+            string resultado = DAO.AdicionarParticipante(aluno);
 
             if (resultado.Equals("OK"))
             {
@@ -119,7 +118,7 @@ namespace KonohaApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            string resultado = DAO.AdicionarParticipante(User.Identity.Name, aluno);
+            string resultado = DAO.AdicionarParticipante(aluno);
 
             if (resultado.Equals("OK"))
             {

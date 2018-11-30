@@ -18,7 +18,7 @@ namespace KonohaApi.DAO
         {
             try
             {
-                var eventoExiste = Db.Evento.Count(x => x.Nome == entity.Nome) > 0;
+                var eventoExiste = Db.Evento.Count(x => x.Nome == entity.Nome && x.AgendaEventoId == entity.AgendaEventoId) > 0;
 
                 if (Db.AgendaEvento.Count(x => x.Id == entity.AgendaEventoId) > 0)
                 {
@@ -105,7 +105,7 @@ namespace KonohaApi.DAO
         {
             try
             {
-                string path = HttpContext.Current.Server.MapPath("~/Imagens/Evento/");
+                string path = HttpContext.Current.Server.MapPath("~/Imagens/Eventos/");
 
                 var bits = Convert.FromBase64String(entity.PathImagem);
 
@@ -117,19 +117,77 @@ namespace KonohaApi.DAO
 
                 entity.PathImagem = nomeImagem;
 
-                var eventoModel = Mapper.Map<EventoViewModel, Evento>(entity);
+                var eventoModel = entity;
 
-                Db.Evento.Attach(eventoModel);
+                var eventoSalvo = Db.Evento.FirstOrDefault(x => x.Id == entity.Id);
+                var eventosParticipante = Db.ParticipanteEvento.Where(x => x.EventoId == entity.Id).ToList();
+    
 
-                var evento = Db.Evento.FirstOrDefault(x => x.Id == entity.Id);
-                var existeFoto = Path.Combine(path, evento.PathImagem);
+                if (eventoSalvo.Local != eventoModel.Local ||
+                   eventoSalvo.DataInicio != eventoModel.DataInicio)
+                {
+                        var descricao = "O evento <b>" + eventoSalvo.Nome + "</b>, no qual você está inscrito, teve alteração na sua data e/ou local. Ele agora ocorrerá <b>" +
+                            eventoModel.DataInicio.ToLongDateString() + "</b> no(a) <b>" + eventoModel.Local +"</b>. Estaremos esperando por você :)";
+
+                        foreach (var item in eventosParticipante)
+                        {
+                            var usuario = Db.Usuario.Find(item.ParticipanteId);
+
+                            GmailEmailService gmail = new GmailEmailService();
+                            EmailMessage msg = new EmailMessage
+                            {
+                                Body = $"<html><head> </head> <body>  <form> <h1>Notificação Konoha</h1><h3>Olá {usuario.Nome}</h3><p>{descricao}</p> </form></body> </html>",
+                                IsHtml = true,
+                                Subject = "Notificação sobre o evento: "+ eventoModel.Nome,
+                                ToEmail = usuario.Email
+                            };
+
+                        gmail.SendEmailMessage(msg);
+
+                    }
+
+                    }
+
+                var existeFoto = Path.Combine(path, eventoSalvo.PathImagem);
+
+                eventoSalvo.Local = eventoModel.Local;
+                eventoSalvo.Nome = eventoModel.Nome;
+                eventoSalvo.NumeroVagas = eventoModel.NumeroVagas;
+                eventoSalvo.PathImagem = eventoModel.PathImagem;
+                eventoSalvo.Descricao = eventoModel.Descricao;
+                eventoSalvo.DataInicio = eventoModel.DataInicio;
+                eventoSalvo.DataEncerramento = eventoModel.DataEncerramento;
+                eventoSalvo.CargaHoraria = eventoModel.CargaHoraria;
+                eventoSalvo.Apresentador = eventoModel.Apresentador;
+                eventoSalvo.AgendaEventoId = eventoModel.AgendaEventoId;
+
+
+                foreach (var item in entity.Funcionario)
+                {
+
+                    EventoFuncionario e = new EventoFuncionario
+                    {
+                        EventoId = eventoModel.Id,
+                        FuncionarioId = item.Id
+                    };
+
+                    var isModerador = Db.EventoFuncionario.Where(x => x.EventoId == eventoModel.Id && x.FuncionarioId == item.Id).ToList();
+
+                    if (isModerador.Count() == 0 )
+                    {
+                        Db.EventoFuncionario.Add(e);
+                        Db.SaveChanges();
+                    }
+                }
+
 
                 if (File.Exists(existeFoto))
                     File.Delete(existeFoto);
 
-                Db.Entry(eventoModel).State = EntityState.Modified;
+                //Db.Entry(eventoModel).State = EntityState.Modified;
                 Db.SaveChanges();
                 return "OK";
+               
             }
             catch (Exception e)
             {
@@ -213,7 +271,7 @@ namespace KonohaApi.DAO
                     {
                         Body = $"<html><head> </head> <body>  <form> <h1>Aviso</h1><h3>Olá {usuario.Nome}</h3><p>{motivo.Descricao}</p> </form></body> </html>",
                         IsHtml = true,
-                        Subject = "Cancelamento de Evento",
+                        Subject = "O Evento " + eventoSelecionado.Nome + "foi cancelado",
                         ToEmail = usuario.Email
                     };
 
